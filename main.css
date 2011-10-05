@@ -16,14 +16,6 @@ img {
 }
 
 #container {
-    width: 612px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 1em;
-    margin-bottom: 1em;
-}
-
-div {
     width: 70%;
     margin-left: auto;
     margin-right: auto;
@@ -54,4 +46,9 @@ div.section {
     border-top: 3px solid black;
     border-left: 3px solid black;
     background-color: #fff;
+}
+
+h1 a {
+    text-decoration: none;
+    color: black;
 }

@@ -9,9 +9,9 @@ author_uri: http://twitter.com/emarocca
 In 1999 Chuck Rush posted on the comp.lang.asm370 newsgroup a beautifully
 written history of the machines and systems we all love. From the Turing
 machine to the Free Software world, the important events of the computer
-revolution are all here, with a great deal of humor.
+revolution are all there, with a great deal of humor.
 
-The Gospel of Tux (v1.0)
+h3. The Gospel of Tux (v1.0)
 
 In the beginning Turing created the Machine.
 

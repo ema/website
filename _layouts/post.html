@@ -4,14 +4,13 @@ page_name: blog
 ---
 <div class="post">
     <h2>{{page.title}}</h2>
-    {{ content }}
-</div>
 
-<div id="tags">
-<small class="meta">{{ page.date | date:"%B %d, %Y" }} {% for t in page.tags %}
-  {% if forloop.first == true %} | {% endif %}
-  {{ t }}{% if forloop.last == false %}, {% endif %}
-  {% endfor %} </small>
+    <small class="meta">{{ page.date | date:"%B %d, %Y" }} {% for t in page.tags %}
+      {% if forloop.first == true %} | {% endif %}
+      {{ t }}{% if forloop.last == false %}, {% endif %}
+      {% endfor %}</small>
+
+    {{ content }}
 </div>
 
 <div id="comments">
