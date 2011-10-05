@@ -5,7 +5,7 @@ page_name: blog
 ---
 
 <div id="writings">
-  <h2>Latest Writings</h2>
+  <h2>Latest writings</h2>
   {% for post in site.posts limit: 10 %}
     <p class="postlink"><a href="{{ site.url }}{{ post.url }}">{{ post.title }}</a> [{{ post.date | date:'%Y/%m/%d' }}]</p>
   {% endfor %}
