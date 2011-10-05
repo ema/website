@@ -7,7 +7,7 @@ directories=`find $BASEDIR -type d | sed s#$BASEDIR##g`
 files=`find $BASEDIR -type f | sed s#$BASEDIR##g`
 
 do_stuff() {
-  echo "$1" 
+  #echo "$1" 
   echo "$1" | cadaver http://www.linux.it/davhome/ema
 }
 
