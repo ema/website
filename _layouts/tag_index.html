@@ -1,0 +1,10 @@
+---
+layout: default
+title: writings on <em>{{subject}}</em>
+---
+
+{% for post in site.posts %}
+  {% if post.tags contains page.subject %}
+    <p class="postlink"><a href="{{ site.url }}{{ post.url }}">{{ post.title }}</a> [{{ post.date | date:'%Y/%m/%d' }}]</p>
+  {% endif %}
+{% endfor %}
