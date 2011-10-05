@@ -1,0 +1,95 @@
+---
+layout: default
+title: blog, ideas, everything
+page_name: blog
+---
+
+<div id="writings">
+  <h2>Latest writings</h2>
+  {% for post in site.posts limit: 10 %}
+    <p class="postlink"><a href="{{ site.url }}{{ post.url }}">{{ post.title }}</a> [{{ post.date | date:'%Y/%m/%d' }}]</p>
+  {% endfor %}
+</div>
+
+<div id="about">
+    <h2>Hey there</h2>
+    <p>Yo. My name is Emanuele Rocca and I am a geek. A socially functional one, but still.
+    If you are looking for information about the football player, you are clearly
+    in the wrong place.  Otherwise, welcome to my homepage!
+    You can
+    <a
+    href="http://www.amazon.com/gp/registry/wishlist/2VUBH9JTKTMC0/ref=wl_web/">buy me a book<!--
+<img src="http://ec1.images-amazon.com/images/G/01/gifts/registries/wishlist/v2/web/wl-btn-74-b._V46774601_.gif" width="74" alt="My Amazon.com Wish List" height="42" border="0" /> --></a>,
+    browse <a href="http://delicious.com/ema_">my bookmarks</a> on Delicious, <a href="http://github.com/ema">see my projects on GitHub</a>
+    or take a look at <a href="http://stackoverflow.com/users/91778/ema">my Stack Overflow profile</a>.
+    </p>
+    <p>
+    I would prefer the book, but hey.
+    </p>
+
+    <h2>Contacts</h2>
+    <p>
+    If you want to write me an email, please <a href="mailto:ema@linux.it">go for it</a>.
+    </p>
+
+    <p>
+    In case you value the confidentiality of communication over the Internet you can
+    <a
+  href="http://db.debian.org/fetchkey.cgi?fingerprint=DEE850F81C5AF8208DD629D30BA0EE03EAF19B60">get
+  my GPG key</a>. If you have no idea what I am talking about please <a href="http://www.phildev.net/pgp/gpgwhy.html">read this article</a>.
+    </p>
+
+    <h2>Free Software</h2>
+    <p>
+    Working on <a href="http://www.gnu.org/philosophy/why-free.html">free software</a> is one 
+    of the geeky things I do for fun (and sometimes profit, but that is secondary). 
+    The logo you can see here on the left is The Hacker Emblem. 
+    Hackers are not those who break into other people's computers. They are those who built
+    the Internet, the World Wide Web, E-Mail and countless other extremely important things.
+
+    Please read more about <a href="http://catb.org/~esr/faqs/hacker-howto.html#attitude">The Hacker Attitude</a> and 
+    <a href="http://en.wikipedia.org/wiki/Hacker_ethic#The_hacker_ethics">The Hacker Ethic</a>.
+    </p>
+
+    <p>
+    I am one of the many <a href="http://www.debian.org/devel/people">official developers</a>
+    of the <a href="http://debian.org">Debian GNU/Linux</a> distribution, 
+    maintaining <a href="http://qa.debian.org/developer.php?login=ema@debian.org">a bunch of packages</a>.
+    Occasionally I do some work <a href="https://launchpad.net/~ema">on Ubuntu</a> as well.
+    </p>
+
+    <p>
+    See the projects on <a href="http://github.com/ema">my GitHub page</a>; I
+    believe that my Bachelor's degree final project is worth a particular mention.
+    It is a <a href="https://github.com/ema/systemtap-ids-poc">simple anomaly
+    based Intrusion Detection System</a> written using the SystemTap
+    instrumentation framework for the Linux kernel and the Python programming
+    language.
+    </p>
+  
+    <p>
+    I had the luck to work with <a href="http://galliera.it/opengood/abstract/marco-de-benedetto">Marco De Benedetto</a>.
+
+    Among the countless pieces of software we wrote together, I think the most
+    important one is <a href="http://code.google.com/p/cherrywado/">a server to
+    retrieve DICOM objects via web</a>. DICOM is a standard for Digital Imaging and
+    Communications in Medicine.
+    </p>
+
+    <p>
+    Years ago I wrote
+    <a href="http://goodies.xfce.org/projects/panel-plugins/xfce4-smartbookmark-plugin">a plugin</a> 
+    for <a href="http://xfce.org">Xfce</a> which was (is?) reasonably popular.
+
+    <p>
+    Just to make the list complete, these are some <a href="bin">questionably useful scripts</a>.
+    I am extremely proud of my <a href="bin/anaborg">pythonic Anagram Cyborg</a>, though.
+    </p>
+
+    <h2>Final note</h2>
+    <p><a href="http://www.w3.org/Style/CSS/learning"><img src="woolly-icon" alt="Cascading Style Sheets" /></a>
+    </p>
+
+    <p>No table has been harmed writing this web page.</p>
+    <p>Please, <a href="http://www.w3.org/2002/03/csslayout-howto">think of the tables</a>.</p>
+</div>
