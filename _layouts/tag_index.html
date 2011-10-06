@@ -1,8 +1,8 @@
 ---
 layout: default
-title: writings on <em>{{subject}}</em>
 ---
 
+<h2>Articles about <em>{{ page.title }}</em></h2>
 {% for post in site.posts %}
   {% if post.tags contains page.subject %}
     <p class="postlink"><a href="{{ site.url }}{{ post.url }}">{{ post.title }}</a> [{{ post.date | date:'%Y/%m/%d' }}]</p>
