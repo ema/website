@@ -6,7 +6,7 @@ author_name: Emanuele Rocca
 author_uri: http://twitter.com/emarocca
 ---
 
-In 1999 Chuck Rush posted on the comp.lang.asm370 newsgroup a beautifully written history of computers. From the Turing machine to the Free Software world, Chuck managed to capture all the important events of the computer revolution with a great deal of humor. Re-posting it here, it is just brilliant.
+Some years ago I came across a really peculiar newsgroup post. It was not about technicalities of any sort. It was about history. A beautifully written history of computers. From the Turing machine to the Free Software world, the original author managed to capture all the important events of the computer revolution with a great deal of humor. Re-posting it here, it is just brilliant.
 
 h3. The Gospel of Tux (v1.0)
 
