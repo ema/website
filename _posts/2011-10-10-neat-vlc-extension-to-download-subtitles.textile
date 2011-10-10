@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Neat VLC extension to download subtitles"
+title: "A neat VLC extension to download subtitles"
 tags: [vlc, video, subtitles, extensions, lua]
 author_name: Emanuele Rocca
 author_uri: http://twitter.com/emarocca
