@@ -1,0 +1,9 @@
+---
+layout: post
+title: "Neat VLC extension to download subtitles"
+tags: [vlc, video, subtitles, extensions, lua]
+author_name: Emanuele Rocca
+author_uri: http://twitter.com/emarocca
+---
+
+The VLC media player allows users to write Lua extensions in order to add new features to the player. One of 
