@@ -4,6 +4,7 @@ title: "First steps with Sinatra on Heroku"
 tags: [sinatra, ruby, heroku, webdev, paas, notes]
 author_name: Emanuele Rocca
 author_uri: http://www.linux.it/~ema/
+date: 2011-12-14 17:21:00
 ---
 
 Lately I have been playing a little bit with different Platform as a Service providers. So far, the most developer-friendly one seems to be "Heroku":http://www.heroku.com. In particular, Heroku provides an incredibly straightforward way to get started. After creating an account on their website, you just have to install the appropriate gem:
