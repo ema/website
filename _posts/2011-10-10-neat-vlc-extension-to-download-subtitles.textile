@@ -1,15 +1,23 @@
 ---
 layout: post
-title: "Neat VLC extension to download subtitles"
+title: "A neat VLC extension to download subtitles"
 tags: [vlc, video, subtitles, extensions, lua]
 author_name: Emanuele Rocca
 author_uri: http://twitter.com/emarocca
 ---
 
-As somebody who often watches movies and TV shows I  have the recurring problem of finding the right English subtitles for the video I am about to enjoy. Now, that is really a tedious thing to do. You have to go on a website such as "opensubtitles.org":http://www.opensubtitles.org/en and type the title of what you are looking for. Then you usually have to choose from a plethora of results, download the archive, unzip it, fire up VLC, go to Video -> Subtitles Track -> Open File, and finally open your subtitles file. And what you typically find out at that point is that the subtitles are completely out of sync with the audio, but rather than doing the whole process again you prefer to just sync them with a bit of VLC-fu. Which always takes longer than you thought, but hey. 
+As somebody who often watches movies and TV shows I  have the recurring problem of finding the right English subtitles for the video I am about to enjoy. Now, that is really a tedious thing to do. You go on a website such as "opensubtitles.org":http://www.opensubtitles.org/en and type the title of what you are looking for. Then you usually have to choose from a plethora of results, download the archive, unzip it, fire up VLC, go to Video -> Subtitles Track -> Open File, and finally open your subtitles file. And what you typically find out at that point is that the subtitles are completely out of sync with the audio, but rather than doing the whole process again you prefer to just sync them with a bit of VLC-fu. Which always takes longer than you thought, but hey. 
 
-Now, what if there was an extremely simple way to auto-magically choose the subtitles for a given movie *directly from VLC*?
+Now, what if there was an extremely simple way to just choose the subtitles for a given movie *directly from VLC*?
 
-The good news is that somebody wrote a beautiful VLC extension that does exactly that. He also wrote a "introductory article about VLC extensions":http://jpeg.dinauz.org/blog/index.php?post/2010/01/30/Extensions-in-VLC. Thank you, Jean-Philippe André. 
+The good news is that somebody wrote a beautiful VLC extension that does exactly that. He also wrote an "introductory article about VLC extensions":http://jpeg.dinauz.org/blog/index.php?post/2010/01/30/Extensions-in-VLC. Thank you, Jean-Philippe André. 
 
-Installing the thing is as simple as downloading "the subtitles extension":https://raw.github.com/gist/1188492/a058a8d19cf3bd1849aa687883f4fb3b78e0de9e/141787-subtitles-mod.lua and putting it in the VLC scripts folder. On Linux machines, the extensions folder is ~/.local/share/vlc/lua/extensions/, on Windows %APPDATA%\VLC\lua\extensions. But seriously, don't use Windows.
+Installing the thing is as simple as downloading "the subtitles extension":http://addons.videolan.org/CONTENT/content-files/141787-subtitles-mod.lua and putting it in the VLC scripts folder. On Linux machines, the extensions folder can be found at ~/.local/share/vlc/lua/extensions/, on Windows %APPDATA%\VLC\lua\extensions. But seriously, don't use Windows.
+
+Once the extension is installed you can start watching a movie and then click View -> Subtitles to open the subtitles search interface.
+
+This is how it looks like:
+
+!http://i.imgur.com/lvpSa.png!
+
+Now that the practical problem is solved, please take some time to look at "the source code":http://addons.videolan.org/CONTENT/content-files/141787-subtitles-mod.lua. VLC uses Lua as the language for writing extensions. I certainly cannot say that the web is full of resources about how to extend VLC using Lua, but the piece of code I wrote about in this post is certainly a good way to start hacking, and maybe scratch yet another itch.
