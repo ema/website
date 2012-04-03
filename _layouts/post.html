@@ -3,7 +3,7 @@ layout: default
 page_name: blog
 ---
 <div class="post">
-    <h2>{{page.title}}</h2>
+    <h2><a href="{{ site.url }}{{ page.url }}">{{page.title}}</h2>
 
     <small class="meta">{{ page.date | date:"%B %d, %Y" }} {% for t in page.tags %}
       {% if forloop.first == true %} | {% endif %}
