@@ -6,6 +6,7 @@
     <meta name="description" content="The homepage of Emanuele Rocca, aka ema. Geek, Debian Developer, Free Software advocate." />
     <meta name="keywords" content="ema, Emanuele Rocca, Emanuele, Debian, Linux" />
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <link href='http://fonts.googleapis.com/css?family=Lato:400,900' rel='stylesheet' type='text/css'>
     <!--<link rel="stylesheet" type="text/css" href="{{ site.url }}/main.css" media="all" />-->
     <link href="http://feeds.feedburner.com/EmaRocca" type="application/atom+xml" rel="alternate" title="Emanuele Rocca's writings" />
     <link rel="openid.server" href="http://openid-provider.appspot.com/emarocca" />
@@ -17,6 +18,7 @@
         background-image: url(http://www.catb.org/hacker-emblem/glider.png);
         background-position: right center;
         background-repeat:no-repeat;
+        font-family: 'Lato', sans-serif; 
     }
 
     img {
@@ -30,7 +32,7 @@
     }
 
     #container {
-        width: 70%;
+        width: 50%;
         margin-left: auto;
         margin-right: auto;
         text-align: justify;
@@ -84,9 +86,9 @@
 
 <body class='{{ page.page_name }}'>
 
+  <div id="container">
   <h1 id="title"><a href="{{ site.url }}">Emanuele Rocca</a></h1>
 
-  <div id="container">
   {{ content }}
   </div>
 
