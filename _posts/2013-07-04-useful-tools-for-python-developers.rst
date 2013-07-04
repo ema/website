@@ -4,7 +4,7 @@ title: "Useful tools for Python developers"
 tags: [python, programming, tools, testing]
 author_name: Emanuele Rocca
 author_uri: http://twitter.com/emarocca
-date: 2013-07-04 18:56:00
+date: 2013-07-04 16:56:00
 ---
 Python is a great language with an impressive number of tools designed to make
 developers' life easier. Sometimes, however, the problem is getting to know
