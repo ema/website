@@ -12,6 +12,7 @@
     <link rel="openid.server" href="http://openid-provider.appspot.com/emarocca" />
     <link rel="openid.delegate" href="http://openid-provider.appspot.com/emarocca" />
     <link rel="stylesheet" type="text/css" href="{{ site.url }}/autumn.css">
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic|Open+Sans:700,400" />
 
     <style>
     @import url(http://fonts.googleapis.com/css?family=Merriweather:300,400);
@@ -21,11 +22,18 @@
         /*background-image: url(http://www.catb.org/hacker-emblem/glider.png);*/
         background-position: right center;
         background-repeat:no-repeat;
-        font-family: Merriweather, serif;
+        /*font-family: Merriweather, serif;*/
+        font-family: 'Droid Serif', serif;
+        font-size: 120%;
+        color: #3A4145;
     }
 
     img {
         border: 0;
+    }
+
+    li {
+        padding: 1px;
     }
 
     #twitter {
@@ -35,7 +43,7 @@
     }
 
     #container {
-        width: 50%;
+        width: 40%;
         margin-left: auto;
         margin-right: auto;
         text-align: justify;
@@ -74,13 +82,43 @@
         background-color: #fff;
     }
 
-    h1 a {
+    a {
         text-decoration: underline;
-        color: black;
+        color: #6A7185;
     }
 
-    pre {
-        font-size: 120%;
+    #title > a, .postTitle >a {
+        text-decoration: none;
+        color: #3A4145;
+    }
+
+    h1#title {
+        padding-bottom: 0.5em;
+    }
+
+    h2.postTitle {
+        padding-top: 0.5em;
+    }
+
+    h1, h2 {
+        text-rendering: optimizeLegibility;
+        line-height: 1;
+        margin-top: 0;
+        font-family: 'Open Sans', sans-serif;
+    }
+
+    h1 {
+        font-size: 3rem;
+        line-height: 1.2em;
+        letter-spacing: -2px;
+        text-indent: -3px;
+    }
+
+    h2 {
+        font-size: 2rem;
+        line-height: 1.2em;
+        letter-spacing: -1px;
+        text-indent: -2px;
     }
     </style>
 
