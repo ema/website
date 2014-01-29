@@ -3,7 +3,7 @@ layout: post
 title: "Antifeatures and Antibugs"
 author_name: Emanuele Rocca
 author_uri: http://www.linux.it/~ema
-date: 2014-01-29 14:42:00
+date: 2014-01-29 15:02:00
 ---
 Software Engineering distinguishes between *software features* and *software
 bugs*.
@@ -95,8 +95,7 @@ adding a feature to Firefox that sets your speakers volume to 11 and starts
 playing a random song from the black metal artist `Burzum`_ every time you add
 a bookmark, unless you pay for *Mozilla Firefox Premium Edition*. The source
 code for Firefox is available under a free license. People who are not into
-Burzum's music would immediately create a new version of Firefox without this
-neat antifeature.
+Burzum's music would immediately remove this neat antifeature.
 
 I have spent many years of my life advocating Free and Open Source Software,
 perhaps using the wrong arguments. `Mako's talk`_ made me think about all this
