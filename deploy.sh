@@ -4,7 +4,7 @@ BASEDIR="_site/"
 DESTDIR="."
 
 directories=`find $BASEDIR -type d | sed s#$BASEDIR##g`
-files=`find $BASEDIR -type f | sed s#$BASEDIR##g`
+files=`find $BASEDIR -type f -name \*.html -or -name \*.xml| sed s#$BASEDIR##g`
 
 do_stuff() {
   #echo "$1" 
