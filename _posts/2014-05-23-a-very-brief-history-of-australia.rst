@@ -9,14 +9,16 @@ date: 2014-05-23 13:35:00
 
 This post is mostly a sum-up of the Wikipedia page `History of Australia`_,
 with some content taken from `History of the British Empire`_. Both texts are
-available under a Creative Commons Attribution-ShareAlike License. I do not
-seem to be able to learn about a new topic without taking notes: in this case I
-have decided to publish my work, hoping that someone will find it useful. Some
-very important themes such as the Gold Rush and Australian History during the
-World Wars have been impudently ignored.
+available under the `Creative Commons Attribution-ShareAlike License`_.
+
+I do not seem to be able to learn about a new topic without taking notes: in
+this case I have decided to publish my work, hoping that someone will find it
+useful. Some very important themes such as the Gold Rush and Australian History
+during the World Wars have been impudently ignored.
 
 .. _History of the British Empire: http://en.wikipedia.org/wiki/History_of_the_British_Empire
 .. _History of Australia: http://en.wikipedia.org/wiki/History_of_Australia
+.. _Creative Commons Attribution-ShareAlike License: https://en.wikipedia.org/wiki/Wikipedia:Text_of_Creative_Commons_Attribution-ShareAlike_3.0_Unported_License
 
 Indigenous Australians
 ======================
