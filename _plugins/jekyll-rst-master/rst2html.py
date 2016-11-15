@@ -16,6 +16,10 @@
 A front end to docutils, producing HTML with syntax colouring using pygments
 """
 
+import sys;
+reload(sys);
+sys.setdefaultencoding("utf8")
+
 try:
     import locale
     locale.setlocale(locale.LC_ALL, '')
