@@ -8,7 +8,7 @@ files=`find $BASEDIR -type f -name \*.html -or -name \*.xml| sed s#$BASEDIR##g`
 
 do_stuff() {
   #echo "$1"
-  echo "$1" | cadaver http://www.linux.it/davhome/ema
+  echo "$1" | cadaver http://www2.linux.it/davhome/ema
 }
 
 jekyll build
