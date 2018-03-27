@@ -1,53 +1,67 @@
----
-layout: default
-title: homepage
-page_name: homepage
----
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Emanuele Rocca</title>
+    <meta name="author" content="Emanuele Rocca" />
+    <meta name="description" content="The homepage of Emanuele Rocca, aka ema. Geek, Wikimedia Site Reliability Engineer, Debian Developer, Free Software advocate." />
+    <meta name="keywords" content="ema, Emanuele Rocca, Wikipedia, Traffic, Emanuele, Debian, Linux" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <link rel="openid.server" href="http://openid-provider.appspot.com/emarocca" />
+    <link rel="openid.delegate" href="http://openid-provider.appspot.com/emarocca" />
+</head>
 
-<div id="about">
-    <h2>About me</h2>
-    <ul>
+<body>
+
+<h1 id="title"><a href="http://www.linux.it/~ema/">Emanuele Rocca</a></h1>
+
+<p>Hi! As you very likely already know, my name is Emanuele and I am a human
+being. As you might not know, I work as a <a href="https://en.wikipedia.org/wiki/Site_reliability_engineering">Site Reliability Engineer</a>
+at <a href="https://wikimediafoundation.org/wiki/Home">Wikimedia Foundation</a>
+focusing on Traffic Engineering for Wikipedia and other Wikimedia sites. I
+have been a member of the <a href="https://www.debian.org/">Debian GNU/Linux project</a>
+since 2003. Let's walk through a list of links about myself of debatable
+importance.<p>
+
+<ul>
     <li><a href="http://github.com/ema">Projects on GitHub</a></li>
+    <li><a href="https://wikimediafoundation.org/wiki/User:ERocca_(WMF)">My Wikimedia staff page</a> (WARNING: includes picture!)</li>
     <li><a href="http://qa.debian.org/developer.php?login=ema@debian.org">Debian packages overview</a></li>
     <li><a href="http://stackoverflow.com/users/91778/ema">Stack Overflow</a> and <a href="http://superuser.com/users/144879/ema">Super User</a> profiles</a></li>
     <li><a href="http://de.linkedin.com/in/emarocca/">LinkedId</a> page</li>
-    <li><a href="http://www.amazon.com/gp/registry/wishlist/2VUBH9JTKTMC0/ref=wl_web/">Books</a> I'd like to read
-    </ul>
+</ul>
 
-    <p>
-    <a href="mailto:ema@linux.it">Drop me an email</a> if you want to get in touch.<!-- My 
-    <a
-  href="http://db.debian.org/fetchkey.cgi?fingerprint=DEE850F81C5AF8208DD629D30BA0EE03EAF19B60">GPG key</a> is: 0xEAF19B60.
-    -->
-    </p>
+<p>In decreasing order of likelihood, you are here because:</p>
 
-    <h2>Presentations</h2>
-    <p>
-    Here is a list of some of the presentations I have given, together with the relevant slides:
-    </p>
+<ul>
+    <li>You are a robot. Hello friendly robot!</li>
+    <li>You have attended a presentation of mine and I told you to come here
+        for the slides. Hopefully the talk was good! Look further down.</li>
+    <li>We know each other and you have searched for my web page. Hi there! Sorry about the web page.</li>
+    <li>You want to send me an email, but you do not know my email address. That is "ema at linux dot it". If you want to send an encrypted message, here is my <a href="http://pgp.mit.edu/pks/lookup?op=get&search=0xD5085A0750FDB7A3">PGP key</a>.</li>
+    <li>You were looking for the Italian football player named Emanuele Rocca
+        and ended up here instead. I am not saying that is unlikely (on the
+        contrary!) but I am sure those looking for the player have stopped
+        reading like, immediately.</li>
+</ul>
 
-    <ul>
-    <li><a href="/~ema/slides/WMF_Traffic_DIBRIS.pdf">Wikipedia's CDN</a>, 2018/03/26</li>
-    <li><a href="/~ema/slides/WMF_Traffic_Varnishcon_2016.pdf">Running Wikipedia.org</a>, 2016/06/17</li>
-    <li><a href="/~ema/slides/terraform.pdf">Terraform</a>, 2015/10/05</li>
-    <li><a href="/~ema/slides/buildbot.pdf">Buildbot</a>, 2015/06/18</li>
-    <li><a href="/~ema/slides/varnish.pdf">Varnish Cache</a>, 2015/06/11</li>
-    <li><a href="/~ema/slides/unix-history.pdf">A brief history of Unix</a>, 2015/03/19</li>
-    <li><a href="/~ema/slides/conpaas-architecture.pdf">ConPaaS Architecture</a>, 2013/06/13</li>
-    <li><a href="/~ema/slides/developers-and-paas.pdf">Developer support in a federated PaaS environment</a><br />(MSc thesis), 2012/06/14</li>
-    <li><a href="/~ema/slides/csrf.pdf">Cross-site request forgery</a>, 2011/12/13</li>
-    <li><a href="/~ema/slides/scalable-webapp-hosting.pdf">Scalable Applications: design, refactor, host</a>, 2011/10/14</li>
-    <li><a href="/~ema/slides/bigtable.pdf">Bigtable: A Distributed Storage System for Structured Data</a>, 2011/03/16</li>
-    <li><a href="/~ema/slides/notifica-consultazione-referti.pdf">Notifica e consultazione del dossier clinico</a> (Italian), 2010/01/20</li>
-    <li><a href="/~ema/slides/systemtap-ids.pdf">SystemTap: applicazioni alla sicurezza informatica</a><br />(BSc thesis, Italian), 2009/10/17</li>
-    <li><a href="/~ema/slides/debian_security_team.pdf">The Debian Security Team</a> (Italian), 2005/12/16 </li>
-    </ul>
-</div>
+<h2>Presentations</h2>
 
-<div id="writings">
-  <h2>Latest writings</h2>
-  {% for post in site.posts limit: 10 %}
-    <p class="postlink"><a href="{{ site.url }}{{ post.url }}">{{ post.title }}</a> [{{ post.date | date:'%Y/%m/%d' }}]</p>
-  {% endfor %}
-</div>
+<ul>
+    <li><a href="http://www.linux.it/~ema/slides/WMF_Traffic_DIBRIS.pdf">Wikipedia's CDN</a>, 2018/03/26</li>
+    <li><a href="http://www.linux.it/~ema/slides/WMF_Traffic_Varnishcon_2016.pdf">Running Wikipedia.org</a>, 2016/06/17</li>
+    <li><a href="http://www.linux.it/~ema/slides/terraform.pdf">Terraform</a>, 2015/10/05</li>
+    <li><a href="http://www.linux.it/~ema/slides/buildbot.pdf">Buildbot</a>, 2015/06/18</li>
+    <li><a href="http://www.linux.it/~ema/slides/varnish.pdf">Varnish Cache</a>, 2015/06/11</li>
+    <li><a href="http://www.linux.it/~ema/slides/unix-history.pdf">A brief history of Unix</a>, 2015/03/19</li>
+    <li><a href="http://www.linux.it/~ema/slides/conpaas-architecture.pdf">ConPaaS Architecture</a>, 2013/06/13</li>
+    <li><a href="http://www.linux.it/~ema/slides/developers-and-paas.pdf">Developer support in a federated PaaS environment</a> (MSc thesis), 2012/06/14</li>
+    <li><a href="http://www.linux.it/~ema/slides/csrf.pdf">Cross-site request forgery</a>, 2011/12/13</li>
+    <li><a href="http://www.linux.it/~ema/slides/scalable-webapp-hosting.pdf">Scalable Applications: design, refactor, host</a>, 2011/10/14</li>
+    <li><a href="http://www.linux.it/~ema/slides/bigtable.pdf">Bigtable: A Distributed Storage System for Structured Data</a>, 2011/03/16</li>
+    <li><a href="http://www.linux.it/~ema/slides/notifica-consultazione-referti.pdf">Notifica e consultazione del dossier clinico</a> (Italian), 2010/01/20</li>
+    <li><a href="http://www.linux.it/~ema/slides/systemtap-ids.pdf">SystemTap: applicazioni alla sicurezza informatica</a>(BSc thesis, Italian), 2009/10/17</li>
+    <li><a href="http://www.linux.it/~ema/slides/debian_security_team.pdf">The Debian Security Team</a> (Italian), 2005/12/16 </li>
+</ul>
 
+</body>
+</html>
