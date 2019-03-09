@@ -1,18 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Emanuele Rocca</title>
-    <meta name="author" content="Emanuele Rocca" />
-    <meta name="description" content="The homepage of Emanuele Rocca, aka ema. Geek, Wikimedia Site Reliability Engineer, Debian Developer, Free Software advocate." />
-    <meta name="keywords" content="ema, Emanuele Rocca, Wikipedia, Traffic, Emanuele, Debian, Linux" />
-    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-    <link rel="stylesheet" href="mini-default.css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
-
-<body>
-
-<h1 id="title"><a href="http://www.linux.it/~ema/">Emanuele Rocca</a></h1>
+include(`header.html.m4')
 
 <p>Hi! As you very likely already know, my name is Emanuele and I am a human
 being. As you might not know, I work as a <a href="https://en.wikipedia.org/wiki/Site_reliability_engineering">Site Reliability Engineer</a>
@@ -63,5 +49,4 @@ importance.<p>
     <li>[Italian] <a href="http://www.linux.it/~ema/slides/debian_security_team.pdf">Debian Security Team</a>. DISI, Università degli studi di Genova, Italy - 2005/12/16 </li>
 </ul>
 
-</body>
-</html>
+include(`footer.html.m4')
