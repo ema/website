@@ -5,8 +5,8 @@ all: $(DESTS)
 %.html: %.html.m4
 	m4 $< > $@
 
-upload: $(DESTS)
-	echo "put $< $<" | cadaver http://www2.linux.it/davhome/ema
+upload: *.html
+	for file in $^; do echo "put $${file} ${{file}" | cadaver http://www2.linux.it/davhome/ema; done
 
 clean:
 	-rm $(DESTS)
