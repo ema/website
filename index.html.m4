@@ -33,7 +33,7 @@ importance.<p>
 <h2>Writings</h2>
 
 <ul>
-    <li><a href="systemtap-intro.html">A brief introduction to SystemTap</a></li>
+    <li><a href="http://www.linux.it/~ema/systemtap-intro.html">A brief introduction to SystemTap</a></li>
 </ul>
 
 <h2>Presentations</h2>
