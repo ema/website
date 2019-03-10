@@ -1,10 +1,12 @@
-all: index.html upload
+DESTS = index.html systemtap-intro.html
 
-index.html:
-	m4 index.html.m4 > index.html
+all: $(DESTS)
 
-upload:
-	echo "put index.html index.html" | cadaver http://www2.linux.it/davhome/ema
+%.html: %.html.m4
+	m4 $< > $@
+
+upload: $(DESTS)
+	echo "put $< $<" | cadaver http://www2.linux.it/davhome/ema
 
 clean:
-	-rm index.html
+	-rm $(DESTS)
