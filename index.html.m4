@@ -30,6 +30,12 @@ importance.<p>
         reading like, immediately.</li>
 </ul>
 
+<h2>Writings</h2>
+
+<ul>
+    <li><a href="systemtap-intro.html">A brief introduction to SystemTap</a></li>
+</ul>
+
 <h2>Presentations</h2>
 
 <ul>
