@@ -14,16 +14,16 @@ On Debian systems and derivatives, including Ubuntu, get started with SystemTap
 by installing the <b>systemtap</b> package as well as the Linux kernel headers:
 </p>
 
-<pre>
+OCODE
 apt install systemtap linux-headers-$(uname -r)
-</pre>
+CCODE
 
 <p>
 To verify that SystemTap is working correctly you can try this hello world
 one-liner:
 </p>
 
-<pre>
+OCODE
 $ sudo stap -v -e 'probe oneshot { println("hello world") }'
 Pass 1: parsed user script and 476 library scripts using 101404virt/87992res/6960shr/81096data kb, in 150usr/30sys/218real ms.
 Pass 2: analyzed script: 1 probe, 1 function, 0 embeds, 0 globals using 102988virt/89752res/7152shr/82680data kb, in 10usr/0sys/7real ms.
@@ -32,7 +32,7 @@ Pass 4: using cached /root/.systemtap/cache/28/stap_2871d732a80a0612c98a3e7e9d7d
 Pass 5: starting run.
 hello world
 Pass 5: run completed in 10usr/20sys/494real ms.
-</pre>
+CCODE
 
 <p>
 Give it another go without <b>-v</b> for more terse and less exciting output.
@@ -49,14 +49,14 @@ we can say are equivalent to the functions ls can call. Let's list as an
 example all functions that might have something to do with usernames:
 </p>
 
-<pre>
+OCODE
 $ sudo stap -L 'process("/bin/ls").function("*user*")'
 process("/bin/ls").function("format_user@src/ls.c:3955") $u:uid_t $width:int $stat_ok:_Bool
 process("/bin/ls").function("format_user_or_group@src/ls.c:3927") $name:char const* $id:long unsigned int $width:int
 process("/bin/ls").function("format_user_or_group_width@src/ls.c:3973") $id:long unsigned int
 process("/bin/ls").function("format_user_width@src/ls.c:3991") $u:uid_t
 process("/bin/ls").function("getuser@lib/idcache.c:69") $uid:uid_t $match:struct userid*
-</pre>
+CCODE
 
 <p>
 The <b>format_user</b> function seems interesting. We can see that it takes
@@ -64,9 +64,9 @@ three arguments: <b>u</b>, <b>width</b>, and <b>stat_ok</b>. Let's print all
 invocations of it, as well as the value of <b>u</b>:
 </p>
 
-<pre>
+OCODE
 $ sudo stap -e 'probe process("/bin/ls").function("format_user") { printf("format_user(uid=%d)\n", $u) }'
-</pre>
+CCODE
 
 <p>
 If SystemTap complains about a <i>Build-id mismatch</i>, try again passing
@@ -79,9 +79,9 @@ Now try running <b>ls -l /etc/passwd</b>, and you should see the following
 output from SystemTap:
 </p>
 
-<pre>
+OCODE
 format_user(uid=0)
-</pre>
+CCODE
 
 <p>
 Try running <b>ls /etc/passwd</b> without <b>-l</b> and notice that SystemTap
@@ -98,14 +98,14 @@ file that slightly changes our previous example by only printing
 <b>format_user</b> calls for files owned by non-root users:
 </p>
 
-<pre>
+OCODE
 // SystemTap example: ls_non_root.stp
 probe process("/bin/ls").function("format_user") {
     if ($u != 0) {
         printf("format_user(uid=%d)\n", $u)
     }
 }
-</pre>
+CCODE
 
 <p>
 Run the script with <b>stap -v ls_non_root.stp</b> and you should now see some
@@ -126,21 +126,21 @@ Now let's look for available Linux kernel probe points matching the
 <b>*icmp*reply*</b> pattern:
 </p>
 
-<pre>
+OCODE
 $ sudo stap -L 'kernel.function("*icmp*reply*")'
 kernel.function("icmp_push_reply@./net/ipv4/icmp.c:367") $icmp_param:struct icmp_bxm* $fl4:struct flowi4* $ipc:struct ipcm_cookie* $rt:struct rtable**
 kernel.function("icmp_reply@./net/ipv4/icmp.c:402") $icmp_param:struct icmp_bxm* $skb:struct sk_buff* $ipc:struct ipcm_cookie $fl4:struct flowi4
 kernel.function("icmpv6_echo_reply@./net/ipv6/icmp.c:670") $skb:struct sk_buff* $tmp_hdr:struct icmp6hdr $fl6:struct flowi6 $msg:struct icmpv6_msg $ipc6:struct ipcm6_cookie
-</pre>
+CCODE
 
 <p>
 Interesting! Let's run <b>ping localhost</b> in one terminal and see if, as
 you'd expect, the <b>icmp_reply</b> function gets called:
 </p>
 
-<pre>
+OCODE
 stap -ve 'probe kernel.function("icmp_reply") { println("reply") }'
-</pre>
+CCODE
 
 <p>
 Silence. Ha! localhost resolves to <b>::1</b> here, and <b>icmp_reply</b> deals
@@ -149,7 +149,7 @@ extend the script as follows, and see when the kernel is sending both v4 and v6
 echo replies.
 </p>
 
-<pre>
+OCODE
 // v4/v6 echo reply
 probe kernel.function("icmp_reply") {
     println("Sending v4 echo reply")
@@ -158,7 +158,7 @@ probe kernel.function("icmp_reply") {
 probe kernel.function("icmpv6_echo_reply") {
     println("Sending v6 echo reply")
 }
-</pre>
+CCODE
 
 <p>
 Some of SystemTap requirements such as large debug packages and GCC are
@@ -169,10 +169,10 @@ dependencies. For example, to compile the hello world probe on a development
 machine:
 </p>
 
-<pre>
+OCODE
 $ sudo stap -e 'probe oneshot { println("hello word") }' -m hello -p4
 hello.ko
-</pre>
+CCODE
 
 <p>
 The command above generates a kernel module named <b>hello.ko</b>, which can be
@@ -183,9 +183,9 @@ target Linux kernel version with <b>-r</b>. For example, to target the
 4.19.0-3-amd64 kernel:
 </p>
 
-<pre>
+OCODE
 $ sudo stap -e 'probe oneshot { println("hello word") }' -m hello -p4 -r 4.19.0-3-amd64
-</pre>
+CCODE
 
 <p>
 In this introduction we have always executed <b>stap</b> as root. On production

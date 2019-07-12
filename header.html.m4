@@ -13,3 +13,6 @@
 <body>
 
 <h1 id="title"><a href="http://www.linux.it/~ema/">Emanuele Rocca</a></h1>
+
+define(OCODE, <pre><code>)
+define(CCODE, </pre></code>)
