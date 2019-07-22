@@ -55,17 +55,23 @@ importance.<p>
     <li>[Italian] <a href="http://www.linux.it/~ema/slides/debian_security_team.pdf">Debian Security Team</a>. DISI, Università degli studi di Genova, Italy - 2005/12/16 </li>
 </ul>
 
-<h2>Publications</h2>
+<h2>Publications and other noteworthy Achievements</h2>
 
 <p>
-I've got one publication. That allows me to brag at parties mostly due to my <a
-href="https://en.wikipedia.org/wiki/Erd%C5%91s_number">Erdős number</a> (5):
+G. Pierre, T. Kielmann, E. Rocca, K. Razavi, B. IJff, H. Fernandez, R. Figueiredo, A. Uta, A. Vintila, A. Oprescu, T. Schuett, M. Berlin, M. Artac, A. Cernivec, <a href="http://www.cs.vu.nl/~kaveh/pubs/pdf/hpdc13-conpaas-poster.pdf">ConPaaS: An Integrated Runtime Environment for Elastic Cloud Applications</a>, in: HPDC (Poster), 2013.
+</p>
+
+<p>
+My <a href="https://en.wikipedia.org/wiki/Erd%C5%91s_number">Erdős number</a> is 5 thanks to the above publication:
 Thilo Kielmann -&gt; Willem Jan Fokkink -&gt; Robbert J.  Fokkink -&gt; Jeffrey
 O. Shallit -&gt; Paul Erdős.
 </p>
 
 <p>
-G. Pierre, T. Kielmann, E. Rocca, K. Razavi, B. IJff, H. Fernandez, R. Figueiredo, A. Uta, A. Vintila, A. Oprescu, T. Schuett, M. Berlin, M. Artac, A. Cernivec, <a href="http://www.cs.vu.nl/~kaveh/pubs/pdf/hpdc13-conpaas-poster.pdf">ConPaaS: An Integrated Runtime Environment for Elastic Cloud Applications</a>, in: HPDC (Poster), 2013.
+Further, I have performed as an extra in <a href="https://www.imdb.com/title/tt1754841/">a movie featuring  Maximilian Dirr</a>, meaning that my <a href="https://en.wikipedia.org/wiki/Six_Degrees_of_Kevin_Bacon#Bacon_numbers">Bacon number</a> is 3:
+Maximilian Dirr -&gt; Donald Sutherland -&gt; Kevin Bacon.
 </p>
+
+<p> At parties, I can thus impress people by saying that my <a href="https://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93Bacon_number">Erdős–Bacon number</a> is 8.</p>
 
 include(`footer.html.m4')
