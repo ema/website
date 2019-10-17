@@ -41,11 +41,11 @@ importance.<p>
 <ul>
     <li><a href="http://www.linux.it/~ema/slides/WMF_ATS-Summit-2019.pdf">Serving Wikipedia with ATS</a>. Apache Traffic Server Summit, Sunnyvale, California, USA - 2019/10/08</li>
     <li><a href="http://www.linux.it/~ema/slides/WMF_Traffic_DIBRIS.pdf">Wikipedia's CDN</a>. DIBRIS, Università degli studi di Genova, Italy - 2018/03/26</li>
-    <li><a href="http://www.linux.it/~ema/slides/WMF_Traffic_Varnishcon_2016.pdf">Running Wikipedia.org</a>. VarnishCon 2016, Amsterdam, Netherlands -  2016/06/17</li>
+    <li><a href="http://www.linux.it/~ema/slides/WMF_Traffic_Varnishcon_2016.pdf">Running Wikipedia.org</a>. VarnishCon 2016, Amsterdam, Netherlands - 2016/06/17 - <a href="https://www.youtube.com/watch?v=W7nfw9Kj-zc">[video]</a></li>
     <li><a href="http://www.linux.it/~ema/slides/terraform.pdf">Terraform</a>. ZenMate, Berlin, Germany - 2015/10/05</li>
     <li><a href="http://www.linux.it/~ema/slides/buildbot.pdf">Buildbot</a>. ZenMate, Berlin, Germany - 2015/06/18</li>
     <li><a href="http://www.linux.it/~ema/slides/varnish.pdf">Varnish Cache</a>. ZenMate, Berlin, Germany - 2015/06/11</li>
-    <li><a href="http://www.linux.it/~ema/slides/unix-history.pdf">A brief history of Unix</a>. ZenMate, Berlin, Germany - 2015/03/19</li>
+    <li><a href="http://www.linux.it/~ema/slides/unix-history.pdf">A brief history of Unix</a>. ZenMate, Berlin, Germany - 2015/03/19 - <a href="https://www.youtube.com/watch?v=L5tVg1Wk0tI">[video]</a></li>
     <li><a href="http://www.linux.it/~ema/slides/conpaas-architecture.pdf">ConPaaS Architecture</a>. Vrije Universiteit Amsterdam, Netherlands - 2013/06/13</li>
     <li><a href="http://www.linux.it/~ema/slides/developers-and-paas.pdf">Developer support in a federated PaaS environment</a> (MSc thesis). Vrije Universiteit Amsterdam, Netherlands - 2012/06/14</li>
     <li><a href="http://www.linux.it/~ema/slides/csrf.pdf">Cross-site request forgery</a>. Vrije Universiteit Amsterdam, Netherlands -  2011/12/13</li>
