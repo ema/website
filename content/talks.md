@@ -1,3 +1,4 @@
+* [Traffic Switchover 2018 vs 2020](http://www.linux.it/~ema/slides/Traffic-Switchover-2018-2020.pdf). Wikimedia SRE Session, The Internet - 2020/09/21
 * [Go and Wikipedia's CDN](http://www.linux.it/~ema/slides/Go-Wikipedia-CDN-2019.pdf). Golang Users Berlin, Zalando Lounge HQ, Berlin, Germany - 2019/11/11
 * [Wikipedia's CDN, A Day In The Life](http://www.linux.it/~ema/slides/Traffic-SRE-Session-2019.pdf). Wikimedia SRE Session, The Internet - 2019/10/31
 * SystemTap markers in ATS. Apache Traffic Server Summit, Sunnyvale, California, USA - 2019/10/10 - [video](https://www.youtube.com/watch?v=IB_wnJ2uLyk)
