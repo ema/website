@@ -5,3 +5,4 @@
 
 # upload with:
 rclone copy public/ ils:
+#rclone copy slides/ ils:slides/
