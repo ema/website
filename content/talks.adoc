@@ -1,0 +1,56 @@
+* *Traffic Switchover 2018 vs 2020* (http://www.linux.it/~ema/slides/Traffic-Switchover-2018-2020.pdf[slides]) +
+2020-09-21, Wikimedia SRE Session, The Internet
+
+* *Go and Wikipedia's CDN* (http://www.linux.it/~ema/slides/Go-Wikipedia-CDN-2019.pdf[slides]) +
+2019-11-11, Golang Users Berlin, Zalando Lounge HQ Berlin, Germany
+
+* *Wikipedia's CDN, A Day In The Life* (http://www.linux.it/~ema/slides/Traffic-SRE-Session-2019.pdf[slides]) +
+2019-10-31, Wikimedia SRE Session, The Internet
+
+* *SystemTap markers in ATS* (https://www.youtube.com/watch?v=IB_wnJ2uLyk[video]) +
+2019-10-10, Apache Traffic Server Summit, Sunnyvale, California, USA
+
+* *Serving Wikipedia with ATS* (http://www.linux.it/~ema/slides/WMF_ATS-Summit-2019.pdf[slides], https://www.youtube.com/watch?v=X3WfZJhfVSI[video]) +
+2019-10-08, Apache Traffic Server Summit, Sunnyvale, California, USA
+
+* *Wikipedia's CDN* (http://www.linux.it/~ema/slides/WMF_Traffic_DIBRIS.pdf[slides]) +
+2018-03-26, DIBRIS, Università degli studi di Genova, Italy
+
+* *Running Wikipedia.org* (http://www.linux.it/~ema/slides/WMF_Traffic_Varnishcon_2016.pdf[slides], https://www.youtube.com/watch?v=W7nfw9Kj-zc[video]) +
+2016-06-17, VarnishCon 2016, Amsterdam, Netherlands
+
+* *Terraform* (http://www.linux.it/~ema/slides/terraform.pdf[slides]) +
+2015-10-05, ZenMate, Berlin, Germany
+
+* *Buildbot* (http://www.linux.it/~ema/slides/buildbot.pdf[slides]) +
+2015-06-18, ZenMate, Berlin, Germany
+
+* *Varnish Cache* (http://www.linux.it/~ema/slides/varnish.pdf[slides]) +
+2015-06-11, ZenMate, Berlin, Germany
+
+* *A brief history of Unix* (http://www.linux.it/~ema/slides/unix-history.pdf[slides], https://www.youtube.com/watch?v=L5tVg1Wk0tI[video]) +
+2015-03-19, ZenMate, Berlin, Germany
+
+* *ConPaaS Architecture* (http://www.linux.it/~ema/slides/conpaas-architecture.pdf[slides], https://vimeo.com/69010471[video]) +
+2013-06-13, ConPaaS Workshop, Vrije Universiteit Amsterdam, Netherlands
+
+* *Developer support in a federated PaaS environment* (http://www.linux.it/~ema/slides/developers-and-paas.pdf[slides]) +
+2012-06-14, MSc thesis discussion, Vrije Universiteit Amsterdam, Netherlands
+
+* *Cross-site request forgery* (http://www.linux.it/~ema/slides/csrf.pdf[slides]) +
+2011-12-13,  Vrije Universiteit Amsterdam, Netherlands
+
+* *Scalable Applications: design, refactor, host* (http://www.linux.it/~ema/slides/scalable-webapp-hosting.pdf[slides]) +
+2011-10-14, Vrije Universiteit Amsterdam, Netherlands
+
+* *Bigtable: A Distributed Storage System for Structured Data* (http://www.linux.it/~ema/slides/bigtable.pdf[slides]) +
+2011-03-16, Vrije Universiteit Amsterdam, Netherlands
+
+* [Italian] *Notifica e consultazione del dossier clinico* (http://www.linux.it/~ema/slides/notifica-consultazione-referti.pdf[slides]) +
+2010-01-20, E.O. Ospedali Galliera, Genova, Italy
+
+* [Italian] *SystemTap: applicazioni alla sicurezza informatica* (http://www.linux.it/~ema/slides/systemtap-ids.pdf[slides]) +
+2009-10-17, BSc thesis discussion, DISI, Università degli studi di Genova, Italy
+
+* [Italian] *Debian Security Team* (http://www.linux.it/~ema/slides/debian_security_team.pdf[slides]) +
+2005-12-16, DISI, Università degli studi di Genova, Italy
