@@ -1,0 +1,163 @@
+---
+title: "A brief introduction to SystemTap"
+date: 2019-10-14T17:18:40+01:00
+---
+SystemTap allows to instrument Linux systems at runtime. By using it, you can
+gather insights about running programs, including the Linux kernel itself,
+without invoking them in specific ways, modifying them, or indeed even having
+access to their source code.
+
+On Debian systems and derivatives, including Ubuntu, get started with SystemTap
+by installing the **systemtap** package as well as the Linux kernel headers:
+
+----
+apt install systemtap linux-headers-$(uname -r)
+----
+
+To verify that SystemTap is working correctly you can try this hello world
+one-liner:
+
+----
+$ sudo stap -v -e 'probe oneshot { println("hello world") }'
+Pass 1: parsed user script and 476 library scripts using 101404virt/87992res/6960shr/81096data kb, in 150usr/30sys/218real ms.
+Pass 2: analyzed script: 1 probe, 1 function, 0 embeds, 0 globals using 102988virt/89752res/7152shr/82680data kb, in 10usr/0sys/7real ms.
+Pass 3: using cached /root/.systemtap/cache/28/stap_2871d732a80a0612c98a3e7e9d7dc4a2_973.c
+Pass 4: using cached /root/.systemtap/cache/28/stap_2871d732a80a0612c98a3e7e9d7dc4a2_973.ko
+Pass 5: starting run.
+hello world
+Pass 5: run completed in 10usr/20sys/494real ms.
+----
+
+Give it another go without *-v* for more terse and less exciting output.
+
+== User space instrumentation
+Now that SystemTap is installed and working on your machine, let's use it to
+give a peek at what *ls* is doing under the hood. In order for SystemTap
+to inspect the behavior of a given program it needs to have access to its
+debugging symbols, which in the case of *ls* on Debian are provided by the
+*coreutils-dbgsym* package. Once the package is installed, you can ask
+SystemTap to list all available _probe points_, which to simplify a little
+we can say are equivalent to the functions ls can call. Let's list as an
+example all functions that might have something to do with usernames:
+
+----
+$ sudo stap -L 'process("/bin/ls").function("*user*")'
+process("/bin/ls").function("format_user@src/ls.c:3955") $u:uid_t $width:int $stat_ok:_Bool
+process("/bin/ls").function("format_user_or_group@src/ls.c:3927") $name:char const* $id:long unsigned int $width:int
+process("/bin/ls").function("format_user_or_group_width@src/ls.c:3973") $id:long unsigned int
+process("/bin/ls").function("format_user_width@src/ls.c:3991") $u:uid_t
+process("/bin/ls").function("getuser@lib/idcache.c:69") $uid:uid_t $match:struct userid*
+----
+
+The *format_user* function seems interesting. We can see that it takes
+three arguments: *u*, *width*, and *stat_ok*. Let's print all
+invocations of it, as well as the value of *u*:
+
+----
+$ sudo stap -e 'probe process("/bin/ls").function("format_user") { printf("format_user(uid=%d)\n", $u) }'
+----
+
+If SystemTap complains about a _Build-id mismatch_, try again passing
+*-DSTP_NO_BUILDID_CHECK* on the command line. In case you're curious, read
+*man error::buildid* to find out more about this.
+
+Now try running *ls -l /etc/passwd*, and you should see the following
+output from SystemTap:
+
+----
+format_user(uid=0)
+----
+
+Try running *ls /etc/passwd* without *-l* and notice that SystemTap
+produces no output, indicating that *ls* does not call the
+*format_user* function in that case.
+
+SystemTap is a fully-fledged programming language with variables, loops,
+conditionals and so forth. One-liners on the shell are fine for exploration and
+simple examples like the ones above, but for longer scripts you might want to
+save your work to a file. Let's do that by creating *ls_non_root.stp*, a
+file that slightly changes our previous example by only printing
+*format_user* calls for files owned by non-root users:
+
+----
+// SystemTap example: ls_non_root.stp
+probe process("/bin/ls").function("format_user") {
+    if ($u != 0) {
+        printf("format_user(uid=%d)\n", $u)
+    }
+}
+----
+
+Run the script with *stap -v ls_non_root.stp* and you should now see some
+output only when running *ls -l* on files owned by users other than root.
+
+== Kernel instrumentation
+How about the Linux kernel? Just as we did before for *coreutils*, we need
+to install the debugging symbols for the kernel currently running. What is
+different though, is that the kernel debug symbols are huge. For example, in
+the case of the 4.19 kernel the debug symbols are about 5G. Make sure you've
+got plenty of disk space available and the patience needed while waiting for
+*apt install linux-image-$(uname -r)-dbg* to do its thing.
+
+Now let's look for available Linux kernel probe points matching the
+`*icmp*reply` pattern:
+
+----
+$ sudo stap -L 'kernel.function("*icmp*reply*")'
+kernel.function("icmp_push_reply@./net/ipv4/icmp.c:367") $icmp_param:struct icmp_bxm* $fl4:struct flowi4* $ipc:struct ipcm_cookie* $rt:struct rtable**
+kernel.function("icmp_reply@./net/ipv4/icmp.c:402") $icmp_param:struct icmp_bxm* $skb:struct sk_buff* $ipc:struct ipcm_cookie $fl4:struct flowi4
+kernel.function("icmpv6_echo_reply@./net/ipv6/icmp.c:670") $skb:struct sk_buff* $tmp_hdr:struct icmp6hdr $fl6:struct flowi6 $msg:struct icmpv6_msg $ipc6:struct ipcm6_cookie
+----
+
+Interesting! Let's run *ping localhost* in one terminal and see if, as
+you'd expect, the *icmp_reply* function gets called:
+
+----
+stap -ve 'probe kernel.function("icmp_reply") { println("reply") }'
+----
+
+Silence. Ha! localhost resolves to *::1* here, and *icmp_reply* deals
+with ICMPv4. The function we're looking for is *icmpv6_echo_reply*. We can
+extend the script as follows, and see when the kernel is sending both v4 and v6
+echo replies.
+
+----
+// v4/v6 echo reply
+probe kernel.function("icmp_reply") {
+    println("Sending v4 echo reply")
+}
+
+probe kernel.function("icmpv6_echo_reply") {
+    println("Sending v6 echo reply")
+}
+----
+
+Some of SystemTap requirements such as large debug packages and GCC are
+undesirable on production systems. Luckily, SystemTap is designed so that you
+can develop and compile your probes on a build host (eg. your laptop, or a
+designated build server), and run them on production hosts with minimal
+dependencies. For example, to compile the hello world probe on a development
+machine:
+
+----
+$ sudo stap -e 'probe oneshot { println("hello word") }' -m hello -p4
+hello.ko
+----
+
+The command above generates a kernel module named *hello.ko*, which can be
+copied to a production host and run with *staprun hello.ko*. Only
+*systemtap-runtime* needs to be installed on the target machine. If the
+kernels running on the build and target hosts differ, you need to specify the
+target Linux kernel version with *-r*. For example, to target the
+4.19.0-3-amd64 kernel:
+
+----
+$ sudo stap -e 'probe oneshot { println("hello word") }' -m hello -p4 -r 4.19.0-3-amd64
+----
+
+In this introduction we have always executed *stap* as root. On production
+systems you might want to add your user to the *staprun* group instead.
+
+We've just scratched the surface of what SystemTap can do. Go ahead and
+https://sourceware.org/systemtap/documentation.html[read the documentation],
+play with it, and have fun.
