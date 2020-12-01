@@ -1,7 +1,7 @@
 baseURL = "https://www.linux.it/~ema/"
 languageCode = "en-us"
 title = "Emanuele Rocca"
-theme = "minimal"
+theme = "hugo-theme-zen"
 #disqusShortname = "username" # delete this to disable disqus comments
 googleAnalytics = ""
 
