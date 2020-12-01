@@ -18,24 +18,19 @@ googleAnalytics = ""
     highlightLanguages = ["go", "haskell", "kotlin", "scala", "swift"]
 
 [[menu.main]]
-    url = "/"
-    name = "Home"
+    url = ""
+    name = "Writings"
     weight = 1
 
 [[menu.main]]
-    url = "/about/"
-    name = "About"
+    url = "talks/"
+    name = "Talks"
     weight = 2
 
 [[menu.main]]
-    url = "/talks/"
-    name = "Talks"
-    weight = 3
-
-[[menu.main]]
-    url = "/publications/"
+    url = "publications/"
     name = "Publications"
-    weight = 4
+    weight = 3
 
 # Social icons to be shown on the right-hand side of the navigation bar.
 # The "name" field should match the name of the icon in Font Awesome.
