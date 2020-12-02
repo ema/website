@@ -1,0 +1,46 @@
+---
+title: "The alternative to wpa_supplicant"
+date: 2020-12-02T16:52:40+01:00
+---
+As of December 2020, there is an alternative to wpa_supplicant. It works. It's
+called https://iwd.wiki.kernel.org/[iwd], iNet Wireless Daemon, and you can use
+it on Debian systems today.
+
+Now, if you use Linux and you've never heard of wpa_supplicant before, you are
+a lucky person. Starting some weeks ago, all my videoconferences got
+interrupted after a few minutes, *ping example.org* said "not today", and I was
+sad. Looking at the the logs I could always see lines like this, a few seconds
+before the connection dropped:
+
+----
+Nov 30 18:56:36 orion wpa_supplicant[728]: wlan0: CTRL-EVENT-SIGNAL-CHANGE above=1 signal=-50 noise=9999 txrate=115600
+----
+
+I am however sitting very close to the access point, and my laptop is the only
+device in the house having issues. So I blame wpa_supplicant. Suddenly iwd came
+to mind, a project I had heard about at All Systems Go! 2019.
+https://media.ccc.de/v/ASG2019-147-iwd-state-of-the-union[Here] is the video of
+the talk.
+
+Here's how it goes:
+
+----
+apt install iwd
+systemctl enable iwd
+----
+
+As you don't want to see wpa_supplicant ever again, mask its unit:
+----
+systemctl mask wpa_supplicant
+----
+
+Then you need to tell Network Manager to use iwd as a supplicant, which boils down to adding the following to */etc/NetworkManager/NetworkManager.conf*:
+
+----
+[device]
+wifi.backend=iwd
+----
+
+Reboot. Rejoice! wpa_supplicant is gone and your wifi connection is up
+nonetheless. My connection stayed up for the whole duration of a meeting. I am
+a happy man.
