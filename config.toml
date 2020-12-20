@@ -7,6 +7,7 @@ googleAnalytics = ""
 
 [params]
     author = "Emanuele Rocca"
+    sidebar = false
     description = "A scholar and a gentleman"
     githubUsername = "ema"
     accent = "red"
