@@ -1,0 +1,133 @@
+---
+title: "Lessons learned from a 27 years old UNIX book"
+date: 2021-02-16T22:06:00+01:00
+---
+
+One of the Amazon reviewers of "Sun Performance and Tuning: Java and the
+Internet" gave it 3/5 stars. While still a nice introduction, the book by
+Adrian Cockcroft has become dated -- claimed Roland in 2003, which believe it
+or not was 18 years ago. The book Roland reviewed was published in 1998, and it
+is a second edition. The first edition (1994) has a significantly different
+title: "https://archive.org/details/sunperformancetu00cock_0[Sparc & Solaris]",
+is the focus instead of "Java and the Internet". Other than reflecting a major
+shift in Sun's focus happened between '94, and '98, the two editions also have
+a different price tag. "Java and the Internet" costs 15.97 EUR, while one can
+get "Sparc & Solaris" used in allegedly **Very Good** conditions for 1.94.  If
+I'm buying an outdated book I'm gonna get the most outdated version possible, I
+figured, plus imagine the embarrassment if someone would find a book about Java
+in my bookshelf. Shipping is 3 bucks, for a grand total of 4.94 EUR the book is
+in my hands 15 days after placing the order.
+
+image::https://images-na.ssl-images-amazon.com/images/I/51PSF9CDRYL.jpg[]
+
+"The Porsche Book" is quick to explain the analogy between UNIX and the Porsche
+911 featured on the cover: both were created in the '60s, in a form similar to
+the current one. Both represent the latest and greatest of products still around
+in 1994, and indeed 2021, despite their quirks.
+
+A valid question at this point clearly is: why do you care about a book
+published 30 years ago when there's so much recent and surely more useful
+material? One reason is that I find the history of Sun Microsystems
+particularly interesting.  I've read and very much enjoyed
+https://archive.org/details/highnoon00kare[High Noon] as well as
+https://archive.org/details/sunburstascentof00hall[Sunburst] -- dealing with
+recent history there's the privilege of having plenty of primary sources
+readily available, which is great. When it comes to the Porsche book, I find it
+fascinating to read about the most common usage scenarios of Sun servers in the
+'90s, and I can't help but feel sorry for the admin who didn't know that for
+SunOS 4, only filenames up to 14 characters long are cached in the Directory
+Name Lookup Cache (DNLC). In this article, however, I want to focus on the
+information contained in the book which is still valid today.  In a world that
+moves as quickly as the world of computing, you could argue that all books are
+outdated to begin with. If some of the information in "Sun Performance and
+Tuning" was valid in 1994 and is still valid in 2021, there's a good chance
+that it will still be valid 30 years from now.
+
+It seems to me that we can categorize tech knowledge as follows: theoretical
+knowledge, generic practical information, and implementation details. Of the
+three, theoretical knowledge is the most likely to stay relevant with time,
+followed by generic practical information which might still apply some years
+later, and finally implementation details which are very likely to become
+irrelevant as time goes by. Those details are far from being useless however:
+in fact they provide the distinction between novice and experienced
+practitioner. To give an example: the chapter about Networks opens with a
+description of the built-in **le** network interface, pointing out that it shared
+its DMA connection with the SCSI interface. Crucially, the network interface had
+higher priority: heavy network activity was likely to reduce disk throughput. In
+1994 you would have needed to see multiple workstations with bad disk
+performance before concluding that network traffic had anything to do with it
+-- or read the book.
+
+But what is the content that stood the test of time?
+
+== Configuration Factors and Levels
+When performing a set of tests, there are multiple settings and knobs one can
+work with, each having various options to choose from. Which filesystem are we
+using?  What's the version of the application we're testing? Kernel buffer
+size?
+
+++++
+<table border="1">
+<tr><td style="padding-left: 5px"><b>Factor</b></td><td style="padding-left: 5px"><b>Level</b></td></tr>
+<tr><td style="padding-left: 5px">Filesystem type</td><td style="padding-left: 5px">ext4, xfs, btrfs,...</td></tr>
+<tr><td style="padding-left: 5px">OS version</td><td style="padding-left: 5px">5.10.16, 5.11, ...</td></tr>
+<tr><td style="padding-left: 5px">vm.dirty_ratio kernel setting</td><td style="padding-left: 5px">20, 40, 60, ...</td></tr>
+</table>
+++++
+
+To measure every combination of 6 different factors with 4 levels each would
+take 4^6 = 4096 measurements, which clearly is madness. By reducing the levels
+we consider to 2, still evaluating all 6 different factors in all possible
+combination, we get down to 2^6 = 64 measurements instead.
+
+== Throughput, Response Time, Utilization
+*Throughput* -- the amount of work performed in a given amount of time -- was a
+thing in the '60s, it's the same thing today, and it will still be *work/time*
+in 2050. Your web server might have a maximum throughput of 10000 requests per
+second (rps), that's something you can use to compare it with another one.
+*Response time* (latency) is defined as the amount of time the user has to
+wait.  For example, how long did a given database transaction take.
+*Utilization* is how much of the computer's resources were used to do the work.
+The values reported by `sar` and `iostat`, two tools very much still in use
+today, are an example of Utilization measures.
+
+The author suggests taking multiple `sar` Utilization measurements at various
+load levels and combine them with `awk` to get an overview of how the system
+behaves. We do have https://prometheus.io/[Prometheus],
+https://grafana.com/[Grafana], and friends nowadays, but the `sar | awk` idea
+is a useful reminder that quick, simple measurements can go a long way too!
+
+== vmstat, sar and iostat Rules
+`vmstat` and `sar` are described in detail, with a focus on runnable queue,
+blocked queue, swap usage, and so forth. The Linux versions of `vmstat` and
+`sar` from https://gitlab.com/procps-ng/procps[procps] and
+http://sebastien.godard.pagesperso-orange.fr/[sysstat] are a bit different than
+the Solaris ones, but the main ideas still apply.
+
+The three commands are also used in the *Rules and Tunables Quick Reference
+Tables* section. For each subsystem (Disk, Network, Memory, CPU), the author
+specified a list of Rules involving the commands and the action to take if the
+rule applies. Rules consist in the name of the command with any options, then a
+"." followed by the name of the variable to take into account. For example, the
+following indicates a disk bottleneck: `35%  < iostat-D30.util < 65%`. The
+action to take is to try balance the I/O load on other disks too, or get more
+disks.
+
+A contemporary version of those rules for Linux would be great to have.
+
+== Interrupt Distribution Tuning
+
+Interrupts in Solaris 2.2 were load-balanced among all available CPUs. The
+drawback was that, in case of heavy interrupt load from a given device, cache
+hit rate would suffer: the OS allowed to statically assign IRQs to CPUs as an
+improvement instead.
+
+Nowadays a very similar problem occurs with the `irqbalance` daemon on Linux,
+which on systems doing lots of network activity should not be used. SMP
+affinity should instead be configured to ensure the interrupts of multiqueue
+network cards are statically mapped among CPUs.
+
+There's more information in "Sun Performance and Tuning" that can still provide
+valuable lessons today, as well as some true historical gems for those into
+such things. Go https://archive.org/details/sunperformancetu00cock_0[check it
+out] on the Internet Archive if you're interested!
