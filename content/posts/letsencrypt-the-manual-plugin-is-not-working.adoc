@@ -5,7 +5,7 @@ date: 2021-03-01T06:52:40+01:00
 For a personal project of mine I've been using a wildcard TLS certificate
 issued by Let's Encrypt.
 https://certbot.eff.org/[certbot] made the process of creating the certificate
-extremely easy, I just had to *apt install certbot* and then run the following
+extremely easy, I just had to `apt install certbot` and then run the following
 command, duly copy-pasted from the Internet:
 
 ----
@@ -44,7 +44,7 @@ in 20 days.
 
 Didn't I configure auto-renewal of the cert? I thought I did but then again who
 knows, weeks have gone by! It turns out I did, with this wonderful
-*/etc/cron.weekly/certbot-renew* script:
+`/etc/cron.weekly/certbot-renew` script:
 
 ----
 #!/bin/sh
@@ -75,7 +75,7 @@ created manually -- I wanted renewals to happen automatically. Luckily certbot
 also didn't guess my Gandi API key.
 
 When the certificate was issued, this
-*/etc/letsencrypt/renewal/example.org.conf* was created for me:
+`/etc/letsencrypt/renewal/example.org.conf` was created for me:
 
 ----
 # renew_before_expiry = 30 days
@@ -95,7 +95,7 @@ manual_public_ip_logging_ok = True
 server = https://acme-v02.api.letsencrypt.org/directory
 ----
 
-The important line is *authenticator = manual* in the *renewalparams* section.
+The important line is `authenticator = manual` in the `renewalparams` section.
 We need to replace that with a plugin for the Gandi DNS service. Thankfully
 https://github.com/obynio[Yohann Leon] was nice enough to
 https://github.com/obynio/certbot-plugin-gandi[write one], and
@@ -103,15 +103,15 @@ https://wiki.ubuntu.com/Unit193[Unit193] packaged it for Debian.
 
 What I did to get certbot to automatically renew my wildcard certificate was:
 
-1) installing the plugin with *apt install python3-certbot-dns-gandi*
+1) installing the plugin with `apt install python3-certbot-dns-gandi`
 
-2) replacing *authenticator = manual* with *authenticator = certbot-plugin-gandi:dns*
+2) replacing `authenticator = manual` with `authenticator = certbot-plugin-gandi:dns`
 
-3) adding *certbot_plugin_gandi:dns_credentials = /etc/letsencrypt/gandi.ini* to tell the plugin where to find my credentials
+3) adding `certbot_plugin_gandi:dns_credentials = /etc/letsencrypt/gandi.ini` to tell the plugin where to find my credentials
 
-4) creating */etc/letsencrypt/gandi.ini* with *dns_gandi_api_key=REDACTED*
+4) creating `/etc/letsencrypt/gandi.ini` with `dns_gandi_api_key=REDACTED`
 
-Almost. Now *certbot renew* failed saying that it cannot find *certbot_plugin_gandi:dns_api_key*:
+Almost. Now `certbot renew` failed saying that it cannot find `certbot_plugin_gandi:dns_api_key`:
 
 ----
 Attempting to renew cert (example.org) from /etc/letsencrypt/renewal/example.org.conf produced an unexpected error: Missing property in credentials configuration file /etc/letsencrypt/gandi.ini:
@@ -120,12 +120,12 @@ Attempting to renew cert (example.org) from /etc/letsencrypt/renewal/example.org
 
 So apparently something was wrong with step (4). Though
 https://github.com/obynio/certbot-plugin-gandi/blob/master/README.md[the docs]
-use *dns_gandi_api_key* as the property name, it seems it should be
-*certbot_plugin_gandi:dns_api_key* instead.
+use `dns_gandi_api_key` as the property name, it seems it should be
+`certbot_plugin_gandi:dns_api_key` instead.
 
 And that's it, here is the final configuration.
 
-*/etc/letsencrypt/renewal/example.org.conf*
+`/etc/letsencrypt/renewal/example.org.conf`
 ----
 # renew_before_expiry = 30 days
 version = 0.31.0
@@ -144,7 +144,7 @@ pref_challs = dns-01,
 server = https://acme-v02.api.letsencrypt.org/directory
 ----
 
-*/etc/letsencrypt/gandi.ini*
+`/etc/letsencrypt/gandi.ini`
 ----
 certbot_plugin_gandi:dns_api_key=REDACTED
 ----
