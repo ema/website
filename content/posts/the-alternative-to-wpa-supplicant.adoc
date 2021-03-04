@@ -8,7 +8,7 @@ it on Debian systems today.
 
 Now, if you use Linux and you've never heard of wpa_supplicant before, you are
 a lucky person. Starting some weeks ago, all my videoconferences got
-interrupted after a few minutes, *ping example.org* said "not today", and I was
+interrupted after a few minutes, `ping example.org` said "not today", and I was
 sad. Looking at the the logs I could always see lines like this, a few seconds
 before the connection dropped:
 
@@ -34,7 +34,7 @@ As you don't want to see wpa_supplicant ever again, mask its unit:
 systemctl mask wpa_supplicant
 ----
 
-Then you need to tell Network Manager to use iwd as a supplicant, which boils down to adding the following to */etc/NetworkManager/NetworkManager.conf*:
+Then you need to tell Network Manager to use iwd as a supplicant, which boils down to adding the following to `/etc/NetworkManager/NetworkManager.conf`:
 
 ----
 [device]
