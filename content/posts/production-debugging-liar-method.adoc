@@ -1,0 +1,145 @@
+---
+title: "Debugging production: the LIAR method"
+date: 2021-03-22T09:38:00+01:00
+---
+
+The release of
+https://www.usenix.org/legacy/event/usenix04/tech/general/full_papers/cantrill/cantrill_html/[DTrace]
+in 2005 marked a turning point in the world of UNIX systems when it comes to
+production analysis, and more in general it greatly helped the process of
+understanding what's going on under the covers by means of dynamic tracing.
+
+Various systems inspired by DTrace have been developed throughout the years,
+including https://sourceware.org/systemtap/wiki[SystemTap] and
+https://github.com/iovisor/bpftrace[bpftrace]. Although these systems differ in
+several important aspects, they all allow to ask questions about a running
+system by following a similar workflow. The List, Instrument, Aggregate, and
+Report (LIAR) acronym can be used to describe such workflow. The rest of this
+article will illustrate the methodology using bpftrace, taking as an example
+the problem of identifying which programs are sending data over TCP sockets,
+and how much data they are sending.
+
+== List
+Without specific knowledge about Linux kernel internals, we can try and *List*
+all available probe points that have 'tcp' and 'send' in their name:
+
+----
+$ sudo bpftrace -l '*tcp*send*'
+tracepoint:tcp:tcp_send_reset
+kprobe:__traceiter_tcp_send_reset
+kprobe:tcp_send_mss
+kprobe:do_tcp_sendpages
+kprobe:tcp_sendpage_locked
+kprobe:tcp_sendpage
+kprobe:tcp_sendmsg_locked
+kprobe:tcp_sendmsg
+[...]
+----
+
+The function
+https://elixir.bootlin.com/linux/latest/source/net/ipv4/tcp.c#L1454[tcp_sendmsg]
+seems interesting, and indeed it is the one responsible for gathering up data
+to be written to a TCP socket. Its signature is:
+
+----
+int tcp_sendmsg(struct sock *sk, struct msghdr *msg, size_t size)
+----
+
+The 'size' argument is what we are interested in, and we are going to print it
+together with the PID next.
+
+== Instrument
+At the *Instrument* step, we need to write a simple bpftrace program that prints
+a line every time the tcp_sendmsg function is called. Given that 'size' is the
+third argument of tcp_sendmsg, and that bpftrace allows to print function
+arguments using the arg0, ..., argN keywords, we are going to access it by
+using 'arg2'. We are going to print the builtin 'pid' variable too.
+
+----
+$ sudo bpftrace -e 'kprobe:tcp_sendmsg {
+    printf("pid=%d: size=%d\n", pid, arg2)
+}'
+Attaching 1 probe...
+pid=764374: size=36
+pid=764374: size=36
+pid=633506: size=43
+pid=633506: size=566
+pid=633506: size=600
+pid=633506: size=58
+pid=633506: size=819
+^C
+----
+
+The output looks reasonable, we can now work on aggregating the 'size' data to
+get further insights on the TCP sending behavior of this system.
+
+== Aggregate
+The
+https://github.com/iovisor/bpftrace/blob/master/docs/reference_guide.md#map-functions[Map
+Functions] provided by bpftrace allow to Aggregate data in various useful ways.
+For example, the
+https://github.com/iovisor/bpftrace/blob/master/docs/reference_guide.md#7-stats-stats[stats()]:
+function returns the count, average, and total for a given value.
+
+Let's use it:
+
+----
+$ sudo bpftrace -e 'kprobe:tcp_sendmsg {
+    @bytes[pid] = stats(arg2);
+    print(@bytes);
+}'
+Attaching 1 probe...
+@bytes[770234]: count 1, average 77, total 77
+
+@bytes[770234]: count 1, average 77, total 77
+@bytes[770237]: count 1, average 77, total 77
+----
+
+We have defined a BPF map called 'bytes', used the PID as the key, and aggregated
+the 'size' argument using stats(). Every time tcp_sendmsg is called, we print
+the values obtained so far.
+
+== Report
+As the final step, we need to Report our findings. Instead of printing the
+values every time tcp_sendmsg is called, it would be nicer to do that only once
+at program termination. Just like DTrace, bpftrace defaults to automatically
+printing aggregation results when the program exits. This is to say that, in
+bpftrace terminology, all populated maps are printed automatically.
+
+The full program is thus simply:
+
+----
+$ sudo bpftrace -e 'kprobe:tcp_sendmsg {
+    @bytes[pid] = stats(arg2);
+}'
+Attaching 1 probe...
+^C
+
+@bytes[769042]: count 1, average 75, total 75
+@bytes[769047]: count 1, average 75, total 75
+@bytes[769052]: count 1, average 75, total 75
+@bytes[769057]: count 1, average 75, total 75
+@bytes[633506]: count 13, average 378, total 4915
+----
+
+All values of the 'bytes' map are printed by default when the user issues a
+CTRL-C. If we want to instead make the program exit after 10 seconds, we can
+use the 'interval' probe as follows:
+
+----
+$ sudo bpftrace -e 'kprobe:tcp_sendmsg {
+    @bytes[pid] = stats(arg2);
+}
+
+interval:s:10 {
+    exit();
+}'
+----
+
+== Conclusion
+This article introduced the LIAR method of production debugging, a workflow in
+four steps that can be followed using DTrace-like systems to inspect various
+aspects of running production systems. See
+https://www.usenix.org/legacy/event/usenix04/tech/general/full_papers/cantrill/cantrill_html/index.html[the original DTrace paper], and
+https://github.com/iovisor/bpftrace/blob/master/docs/reference_guide.md[the
+bpftrace reference guide] for more!
