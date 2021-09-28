@@ -5,7 +5,10 @@ focusing on Traffic Engineering for Wikipedia and other Wikimedia sites. I also
 contribute to [Debian](https://www.debian.org/) as a Developer. Throughout the
 years (I started in 2003!) I have been involved in various areas of Debian,
 currently mostly maintaining
-[SystemTap](https://sourceware.org/systemtap/wiki).
+[SystemTap](https://sourceware.org/systemtap/wiki). Among the things I'm proud
+of, I wrote an article for Linux Weekly News about [SystemTap and
+bpftrace](https://lwn.net/Articles/852112/), and discovered a vulnerability in
+ppp: [CVE-2015-3310](https://www.debian.org/security/2015/dsa-3228).
 
 <!--
 Some information that you might find interesting:
