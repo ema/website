@@ -1,7 +1,7 @@
-Hi! My name is Emanuele and I'm a [Site Reliability
-Engineer](https://en.wikipedia.org/wiki/Site_reliability_engineering) at
-[Wikimedia Foundation](https://en.wikipedia.org/wiki/Wikimedia_Foundation)
-focusing on Traffic Engineering for Wikipedia and other Wikimedia sites. I also
+Hi! My name is Emanuele and I'm a Systems Development Engineer at
+[AWS](https://en.wikipedia.org/wiki/Amazon_Web_Services) focusing on the hosts
+that provide the underlying infrastracture for
+[EC2](https://en.wikipedia.org/wiki/Amazon_Elastic_Compute_Cloud). I also
 contribute to [Debian](https://www.debian.org/) as a Developer. Throughout the
 years (I started in 2003!) I have been involved in various areas of Debian,
 currently mostly maintaining
