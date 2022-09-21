@@ -1,10 +1,7 @@
-Hi! My name is Emanuele and I'm a Systems Development Engineer at
-[AWS](https://en.wikipedia.org/wiki/Amazon_Web_Services) focusing on the hosts
-that provide the underlying infrastracture for
-[EC2](https://en.wikipedia.org/wiki/Amazon_Elastic_Compute_Cloud). I also
-contribute to [Debian](https://www.debian.org/) as a Developer. Throughout the
-years (I started in 2003!) I have been involved in various areas of Debian,
-currently mostly maintaining
+Hi! My name is Emanuele and I'm a [Debian](https://www.debian.org/) Developer.
+Throughout the years (I started in 2003!) I have been involved in various areas
+of Debian. Currently, I'm a member of the [Debian Python
+Team](https://wiki.debian.org/Teams/PythonTeam) and I maintain
 [SystemTap](https://sourceware.org/systemtap/wiki). Among the things I'm proud
 of, I wrote an article for Linux Weekly News about [SystemTap and
 bpftrace](https://lwn.net/Articles/852112/), and discovered a vulnerability in
