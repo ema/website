@@ -38,8 +38,8 @@ googleAnalytics = ""
     weight = 3
 
 [[menu.main]]
-    url = "https://twitter.com/realEmaRocca"
-    name = "Twitter"
+    url = "contacts/"
+    name = "Contacts"
     weight = 4
 
 # Social icons to be shown on the right-hand side of the navigation bar.
