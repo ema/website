@@ -1,0 +1,145 @@
+---
+title: "Running Any Distro on Debian"
+date: 2023-01-07T07:18:40+02:00
+---
+All graybeard hackers know that: (1) Docker is silly, and (2) containers are
+very useful. This post is about running pretty much any Linux distribution on
+top of a Debian host using chroots, which technically speaking aren't
+containers but for my purposes pretty much are. The chroot can be used in a
+disposable fashion or it can be instructed to persist any modifications made to
+the filesystem. The tools used for this are
+https://manpages.debian.org/unstable/schroot/schroot.1.en.html[schroot],
+https://manpages.debian.org/unstable/debootstrap/debootstrap.8.en.html[debootstrap],
+https://manpages.debian.org/unstable/rinse/rinse.8.en.html[rinse], and
+https://manpages.debian.org/unstable/alpine-chroot-install/alpine-chroot-install.8.en.html[alpine-chroot-install].
+
+== schroot
+Back in 2005 when Docker was not a thing yet, lots of the things that Gartner
+Inc. likes about containers were very much possible with **chroot**.  For
+example, if all you care about is running commands on a different distro
+without messing up your own file system, a chroot will do.
+
+Container is just a fancy name for chroot with namespaces FFS.
+
+Anyways, to configure `schroot` you need to edit
+**/etc/schroot/schroot.conf**. For example:
+
+----
+[bullseye]
+type=directory
+directory=/srv/chroots/bullseye
+
+[fedora-36]
+type=file
+file=/srv/chroots/fedora-36.tar
+----
+
+The main commands to remember are just two: `schroot -c $name` and
+`schroot -l`: the former starts a shell in the chroot named
+**$name** (eg: **bullseye** in the configuration above). The latter
+lists all available chroots. That's it.
+
+----
+ema@pinolo:~$ schroot -l
+chroot:bullseye
+chroot:fedora-36
+ema@pinolo:~$ sudo schroot -c fedora-36
+[root@pinolo ema]# cat /etc/redhat-release 
+Fedora release 36 (Thirty Six)
+[root@pinolo ema]# 
+----
+
+There are two main types of chroots: **directory** or **file**. A **directory**
+chroot like **bullseye** in the example above can be modified, meaning that the
+results of any command executed within it will persist after leaving the
+chroot. Conversely the second example is a **file** chroot (**fedora-36**).
+**file** chroots, are ephemeral: you can use them to try whatever disruptive
+action you like, and after logging out the chroot will be back to its
+original stage.
+
+== Creating pretty much any distro
+One great thing about Docker is that with dockerhub you can fetch a pre-made
+image of whatever distro you care about. If you're not careful you end up with
+a monero miner on your laptop, but I digress.
+
+Luckily for us, Debian has all the tools to bootstrap whatever distro you
+fancy in a safe way.
+
+Use `debootstrap` to create a Debian distribution (or derivative, including
+Ubuntu). For example, to create a **directory** chroot with Debian Bullseye
+under `/srv/chroots/bullseye`:
+
+----
+sudo debootstrap bullseye /srv/chroots/bullseye http://deb.debian.org/debian
+----
+
+Similarly, for a **directory** chroot with **Ubuntu Kinetic**:
+
+----
+sudo debootstrap kinetic /srv/chroots/kinetic http://archive.ubuntu.com/ubuntu
+----
+
+See `ls /usr/share/debootstrap/scripts/` for the list of all distros
+supported by **debootstrap**.
+
+There's a more modern and under certain aspects better version of debootstrap called **mmdebstrap**. See the man page for details, but you can create a **file** chroot with **Debian Sid** with this simple command:
+
+----
+sudo mmdebstrap sid /srv/chroots/sid.tar
+----
+
+It may be obvious to my astute readers, but let me say it out loud:
+you can make a **file** chroot out of a **directory** chroot with
+`tar`:
+
+----
+sudo tar -cvf /srv/chroots/kinetic.tar -C /srv/chroots/kinetic .
+----
+
+To create RedHat and derivatives, use **rinse**:
+
+----
+sudo rinse --distribution fedora-36 --arch amd64 --directory /srv/chroots/fedora-36
+----
+
+See `ls -l /etc/rinse/*.packages` for the list of all distros
+supported by **rinse**. There's CentOS, OpenSuse, you name it.
+
+Alpine Linux can be created with **alpine-chroot-install** as
+follows:
+
+----
+sudo alpine-chroot-install -d /srv/chroots/alpine/
+----
+
+Technically, **pacstrap** should be able to bootstrap an Arch Linux
+installation, but I did not manage to get it to work. If you know how to make
+it do the right thing, https://www.linux.it/~ema/contacts/[let me know]! First
+I tried:
+
+----
+sudo pacstrap /srv/chroots/arch/
+==> Creating install root at /srv/chroots/arch/
+==> Installing packages to /srv/chroots/arch/
+error: no usable package repositories configured.
+==> ERROR: Failed to install packages to new root
+----
+
+To fix that I've added the following to `pacman.conf`:
+
+----
+[core]
+Server = https://mirrors.kernel.org/archlinux/$repo/os/$arch
+----
+
+Trying the command again however I just got a lot of failed dependencies, and finally:
+
+----
+:: unable to satisfy dependency 'archlinux-keyring' required by base
+==> ERROR: Failed to install packages to new root
+----
+
+That's when I gave up and followed
+https://wiki.archlinux.org/title/Install_Arch_Linux_from_existing_Linux#Method_A:_Using_the_bootstrap_tarball_(recommended)[the
+Arch wiki], which suggests downloading pre-made tarballs. Hopefully without
+monero miners.
