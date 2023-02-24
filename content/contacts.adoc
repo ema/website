@@ -1,6 +1,6 @@
 Contacts, LOL so 90s.
 
-E-mail: ema@linux.it
+E-mail: ema@linux.it. My PGP key is https://keyserver.ubuntu.com/pks/lookup?search=0x50FDB7A3&fingerprint=on&op=index[0x50FDB7A3], and this is the full fingerprint if you want to verify it: *9545 9696 1928 1C17 FFAC  5891 D508 5A07 50FD B7A3*.
 
 IRC: **ema** on https://www.oftc.net/[OFTC] and https://libera.chat/[Libera]
 
