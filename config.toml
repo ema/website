@@ -18,6 +18,10 @@ googleAnalytics = ""
     highlightStyle = "default"
     highlightLanguages = ["go", "haskell", "kotlin", "scala", "swift"]
 
+[author]
+    name = "Emanuele Rocca"
+    email = "ema@linux.it"
+
 [security]
   [security.exec]
     allow = ['^dart-sass-embedded$', '^go$', '^npx$', '^postcss$', '^asciidoctor$', '^pandoc$']
