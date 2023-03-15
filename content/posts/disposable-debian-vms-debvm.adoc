@@ -1,0 +1,73 @@
+---
+title: "Disposable Debian VMs with debvm"
+date: 2023-03-15T07:18:40+02:00
+---
+
+Some notes on using `debvm`, an amazing piece of software I've started using
+only recently.
+
+Create a new virtual machine:
+
+----
+$ debvm-create
+----
+
+You now have a virtual machine with Debian Sid of your host native
+architecture (probably amd64). The image file is called rootfs.ext4. You've
+got 1G of disk space in the VM.
+
+You can now just run the VM! You will be automatically logged is as root.
+
+----
+$ debvm-run
+----
+
+Experiment in the VM, run all the sort of tests you have in mind. For example,
+one thing I commonly do is verifying that things work in a clean environment,
+as opposed to "on my machine".
+
+If anything goes wrong, or if you just want to repeat the test: shutdown the
+guest, remove `rootfs.ext4`, and start again with `debvm-create`.
+
+Now, especially if you intend creating and recreating VMs multiple times, it
+helps to use a local apt mirror as a cache to avoid fetching all the required
+packages from the internet over and over again. Install `apt-cacher-ng` on
+your host machine and point `debvm-create` at it:
+
+----
+$ debvm-create -- http://10.0.3.1:3142/debian
+----
+
+The additional options after `--` are passed to `mmdebstrap`. In this case
+we're specifying http://10.0.3.1:3142/debian as the URL of our local apt
+mirror. It is going to be used both for image creation and as the only entry in
+`/etc/apt/sources.list` on the guest. This is the reason for using 10.0.3.1,
+the IP address of the lxcbr0 interface used by qemu, instead of 127.0.0.1: to
+make sure that the **guest** VM has access to it too.
+
+For a slightly more advanced example, we now want to:
+
+- run a arm64 VM
+- have more disk space availably, say 2G
+- install additional packages (`curl` and `locales`)
+- allow SSH as root with the given public keys, in this example the
+  `authorized_keys` installed on the host
+- start the VM in the background with no console output
+
+----
+$ debvm-create -a arm64 -o sid-arm64.ext4 -z 2G -k ~/.ssh/authorized_keys -- http://10.0.3.1:3142/debian --include curl,locales
+----
+
+Start the VM:
+
+----
+$ debvm-run -i sid-arm64.ext4 -s 2222 -g -- -display none &
+----
+
+SSH into the guest:
+
+----
+$ ssh -o NoHostAuthenticationForLocalhost=yes -p 2222 root@127.0.0.1
+----
+
+Enjoy!
