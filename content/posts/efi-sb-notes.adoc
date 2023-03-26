@@ -1,0 +1,160 @@
+---
+title: "EFI and Secure Boot Notes"
+date: 2023-03-26T07:18:40+02:00
+---
+
+To create a bootable EFI drive to use with QEMU, first make a disk image and
+create a `vfat` filesystem on it.
+
+----
+$ dd if=/dev/zero of=boot.img bs=1M count=512
+$ sudo mkfs.vfat boot.img
+----
+
+By default, EFI firmwares boot a specific file under `/efi/boot/`. The name of
+such file depends on the architecture: for example, on 64 bit x86 systems it is
+`bootx64.efi`, while on ARM it is `bootaa64.efi`.
+
+Copy `/usr/lib/grub/x86_64-efi/monolithic/grubx64.efi` from package
+`grub-efi-amd64-bin` to `/efi/boot/bootx64.efi` on the boot image, and that
+should be enough to start GRUB.
+
+----
+# mount boot.img /mnt/
+# mkdir -p /mnt/efi/boot/
+# cp /usr/lib/grub/x86_64-efi/monolithic/grubx64.efi /mnt/efi/boot/bootx64.efi
+# umount /mnt/
+----
+
+Now get the x86 firmware from package `ovmf` and start `qemu`:
+
+----
+$ cp /usr/share/OVMF/OVMF_CODE.fd /tmp/code.fd
+$ qemu-system-x86_64 -drive file=/tmp/code.fd,format=raw,if=pflash -cdrom boot.img
+----
+
+GRUB looks fine, but it would be good to have a kernel to boot. Let's add one
+to `boot.img`.
+
+----
+# mount boot.img /mnt
+# cp vmlinuz-6.1.0-7-amd64 /mnt/vmlinuz
+# umount /mnt/
+----
+
+Boot with qemu again, but this time pass `-m 1G`. The default amount of
+memory is not be enough to boot.
+
+----
+$ qemu-system-x86_64 -drive file=/tmp/code.fd,format=raw,if=pflash -cdrom boot.img -m 1G
+----
+
+At the grub prompt, type the following to boot:
+
+----
+grub> linux /vmlinuz
+grub> boot
+----
+
+The kernel will start and reach the point of trying to mount the root fs. This
+is great but it would now be useful to have some sort of shell access in order
+to look around. Let's add an initrd!
+
+----
+# mount boot.img /mnt
+# cp initrd.img-6.1.0-7-amd64 /mnt/initrd
+# umount /mnt/
+----
+
+There's the option of starting qemu in console, let's try that out. Start qemu
+with `-nographic`, and append `console=ttyS0` to the kernel command line
+arguments.
+
+----
+$ qemu-system-x86_64 -drive file=/tmp/code.fd,format=raw,if=pflash -cdrom boot.img -m 1G -nographic
+grub> linux /vmlinuz console=ttyS0
+grub> initrd /initrd
+grub> boot
+----
+
+If all went well we are now in the initramfs shell. We can now run commands! At
+this point we can see that the system has Secure boot disabled:
+
+----
+(initramfs) dmesg | grep secureboot
+[    0.000000] secureboot: Secure boot disabled
+----
+
+In order to boot with Secure boot, we need:
+
+- a signed shim, grub, and kernel
+- the right EFI variables for Secure boot
+
+The package `shim-signed` provides a shim signed with Microsoft's key, while
+`grub-efi-amd64-signed` has GRUB signed with Debian's key.
+
+The signatures can be shown with `sbverify --list`:
+
+----
+$ sbverify --list /usr/lib/shim/shimx64.efi.signed
+warning: data remaining[823184 vs 948768]: gaps between PE/COFF sections?
+signature 1
+image signature issuers:
+ - /C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Corporation UEFI CA 2011
+image signature certificates:
+ - subject: /C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Windows UEFI Driver Publisher
+   issuer:  /C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Corporation UEFI CA 2011
+ - subject: /C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Corporation UEFI CA 2011
+   issuer:  /C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Corporation Third Party Marketplace Root
+----
+
+Similarly for GRUB and the kernel:
+
+----
+$ sbverify --list /usr/lib/grub/x86_64-efi-signed/grubx64.efi.signed
+signature 1
+image signature issuers:
+ - /CN=Debian Secure Boot CA
+image signature certificates:
+ - subject: /CN=Debian Secure Boot Signer 2022 - grub2
+   issuer:  /CN=Debian Secure Boot CA
+$ sbverify --list /mnt/vmlinuz
+signature 1
+image signature issuers:
+ - /CN=Debian Secure Boot CA
+image signature certificates:
+ - subject: /CN=Debian Secure Boot Signer 2022 - linux
+   issuer:  /CN=Debian Secure Boot CA
+----
+
+Let's use the signed shim and grub in the boot image:
+
+----
+# mount boot.img /mnt
+# cp /usr/lib/shim/shimx64.efi.signed /mnt/efi/boot/bootx64.efi
+# cp /usr/lib/grub/x86_64-efi-signed/grubx64.efi.signed /mnt/efi/boot/grubx64.efi
+# umount /mnt
+----
+
+And start QEMU with the appropriate EFI variables for Secure boot:
+
+----
+$ cp /usr/share/OVMF/OVMF_VARS.ms.fd /tmp/vars.fd
+$ qemu-system-x86_64 -drive file=/tmp/code.fd,format=raw,if=pflash -drive file=/tmp/vars.fd,format=raw,if=pflash -cdrom boot.img -m 1G -nographic
+----
+
+We can double-check in the firmware settings if Secure boot is indeed enabled.
+At the GRUB prompt, type `fwsetup`:
+
+----
+grub> fwsetup
+----
+
+Check under "Device Manager" -> "Secure Boot Configuration" that "Attempt
+Secure Boot" is selected, then boot from GRUB as before. If all went well, the
+kernel should confirm that we have booted with Secure boot:
+
+----
+(initramfs) dmesg | grep secureboot
+[    0.000000] secureboot: Secure boot enabled
+----
