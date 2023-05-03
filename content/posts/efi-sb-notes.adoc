@@ -43,7 +43,7 @@ to `boot.img`.
 ----
 
 Boot with qemu again, but this time pass `-m 1G`. The default amount of
-memory is not be enough to boot.
+memory is not enough to boot.
 
 ----
 $ qemu-system-x86_64 -drive file=/tmp/code.fd,format=raw,if=pflash -cdrom boot.img -m 1G
