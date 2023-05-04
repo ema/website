@@ -1,0 +1,110 @@
+---
+title: "UEFI Secure Boot on the Raspberry Pi"
+date: 2023-05-04T13:29:40+02:00
+---
+
+A port of the free software https://www.tianocore.org/[TianoCore] UEFI firmware
+can be used instead of the proprietary boot blob to boot the Raspberry Pi.
+This allows to install Debian on the RPi with the standard Debian Installer,
+and it also makes it possible to use UEFI Secure Boot. Note that Secure Boot
+had been broken on arm64 for a while, but it's now
+https://www.phoronix.com/news/Debian-ARM64-Secure-Boot-Fix[working in Bookworm]!.
+
+== Debian Installer UEFI boot
+
+To begin, you'll need to download the appropriate firmware files for the
+https://github.com/pftf/RPi3/releases[RPi3] or
+https://github.com/pftf/RPi4/releases[RPi4]. I've got a **Raspberry Pi 3 Model
+B+** myself, so the rest of this document will assume an RPi3 is being
+installed.
+
+Plug the SD card you are going to use as the RPi storage device into another
+system. Say it shows up as `/dev/sdf`. Then:
+
+----
+# Create an msdos partition table
+$ sudo parted --script /dev/sdf mklabel msdos
+# Create, format, and label a 10M fat32 partition
+$ sudo parted --script /dev/sdf mkpart primary fat32 0% 10M
+$ sudo mkfs.vfat /dev/sdf1
+$ sudo fatlabel /dev/sdf1 RPI-FW
+# Get the UEFI firmware onto the SD card
+$ sudo mount /dev/sdf1 /mnt/data/
+$ sudo unzip Downloads/RPi3_UEFI_Firmware_v1.38.zip -d /mnt/data/
+$ sudo umount /mnt/data
+----
+
+At this point, the SD card can be used to boot the RPi, and you'll get a UEFI
+firmware.
+
+Download the
+https://cdimage.debian.org/cdimage/bookworm_di_rc2/arm64/iso-cd/[Bookworm RC 2
+release of the installer], copy it to a USB stick
+https://www.debian.org/releases/bookworm/arm64/ch04s03.en.html[as described in
+the Installation Guide], and boot your RPi from the stick. If for some reason
+booting from the stick does not happen automatically, enter the firmware
+interface with `ESC` and choose the USB stick from `Boot Manager`.
+
+Proceed with the installation as normal, paying attention not to modify the
+firmware partition labeled *RPI-FW*. I initially thought it would be nice to
+reuse the firmware partition as ESP partition as well. However, setting the
+`esp` flag `on` makes the RPi unbootable. Either configuring the partition as ESP
+in debian-installer, or manually with `sudo parted --script /dev/sda set 1 esp
+on`, breaks boot. In case you accidentally do that, set it back to `off` and
+the edk2 firmware will boot again.
+
+What I suggest doing in terms of partitioning is: (1) leave the 10M
+partition created above for the firmware alone, and (2) create another 512M or
+so ESP partition for EFI boot.
+
+The installation should go smoothly till the end, but rebooting won't work.
+Doh. This is because of an important gotcha: the Raspberry Pi port of the
+TianoCore firmware we are using
+https://github.com/tianocore/edk2-platforms/tree/master/Platform/RaspberryPi/RPi3#nvram[does
+not support setting UEFI variables persistently from a "High Level Operating
+System (HLOS)"], which is the debian-installer in our case. *Persistently* is
+the keyword there: variables can be set and modified regularly -- with
+`efibootmgr` or otherwise, but crucially the modifications do not survive
+reboot. However, changes made from the firmware interface itself *are*
+persistent. So enter the firmware with `ESC` right after booting the RPi,
+select `Boot Maintenance Manager` -> `Boot Options` -> `Add Boot Option` ->
+Your SD card -> Your ESP partition -> `EFI` -> `debian` -> `shimaa64.efi`.
+Choose a creative name for your boot entry (eg: "debian"), save and exit the
+firmware interface. Bookworm should be booting fine at this point!
+
+== Enabling Secure Boot
+Although the TianoCore firmware does support Secure Boot, there are no keys
+enrolled by default. To add the required keys, copy
+https://people.debian.org/~ema/sb/debian-ca/PK-0001.der[PK-0001.der],
+https://people.debian.org/~ema/sb/debian-ca/DB-0001.der[DB-0001.der],
+https://people.debian.org/~ema/sb/debian-ca/DB-0002.der[DB-0002.der],
+https://people.debian.org/~ema/sb/debian-ca/KEK-0001.der[KEK-0001.der], and
+https://people.debian.org/~ema/sb/debian-ca/KEK-0002.der[KEK-0002.der]
+to a FAT32 formatted USB stick.
+
+Here's a summary of the Subject field for each of the above:
+
+----
+PK-0001.der.pem
+        Subject: O = Debian, CN = Debian UEFI Secure Boot (PK/KEK key), emailAddress = debian-devel@lists.debian.org
+DB-0001.der.pem
+        Subject: C = US, ST = Washington, L = Redmond, O = Microsoft Corporation, CN = Microsoft Windows Production PCA 2011
+DB-0002.der.pem
+        Subject: C = US, ST = Washington, L = Redmond, O = Microsoft Corporation, CN = Microsoft Corporation UEFI CA 2011
+KEK-0001.der.pem
+        Subject: O = Debian, CN = Debian UEFI Secure Boot (PK/KEK key), emailAddress = debian-devel@lists.debian.org
+KEK-0002.der.pem
+        Subject: C = US, ST = Washington, L = Redmond, O = Microsoft Corporation, CN = Microsoft Corporation KEK CA 2011
+----
+
+Plug the stick into the RPi, boot and enter the firmware interface with `ESC`.
+Select `Device Manager` -> `Secure Boot Configuration` -> `Secure Boot Mode` ->
+choose `Custom Mode` -> `Custom Secure Boot Options` -> `PK Options` -> `Enroll
+PK` -> choose *PK-0001.der*. Do the same for `DB Options`, this time choose
+*DB-0001.der* and *DB-0002.der*. As you may have guessed by now, the same must
+be done for `KEK Options`, but adding *KEK-0001.der* and *KEK-0002.der*. Save,
+exit, reboot. If everything went well, your RPi now has booted with Secure Boot
+enabled.
+
+See https://wiki.debian.org/SecureBoot for the details on how to check whether
+Secure Boot has been enabled correctly and much more.
