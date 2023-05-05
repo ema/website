@@ -3,6 +3,19 @@ title: "UEFI Secure Boot on the Raspberry Pi"
 date: 2023-05-04T13:29:40+02:00
 ---
 
+**UPDATE**: this post unexpectedly
+https://news.ycombinator.com/item?id=35815382[ended up on Hacker News] and I
+received a lot of comments. The two most important points being made are (1)
+that Secure Boot on the RPi as described here is not actually truly secure. An
+attacker who successfully gained root could just mount the firmware partition
+and either add their own keys to the EFI variable store or replace the firmware
+altogether with a malicious one. (2) The TianCore firmware cannot be used
+_instead_ of the proprietary blob as I mentioned. What truly happens is that
+the proprietary blob is loaded onto the VideoCore cores, then TianoCore is
+loaded onto the ARM cores. Thanks for the corrections.
+
+'''
+
 A port of the free software https://www.tianocore.org/[TianoCore] UEFI firmware
 can be used instead of the proprietary boot blob to boot the Raspberry Pi.
 This allows to install Debian on the RPi with the standard Debian Installer,
