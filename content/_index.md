@@ -1,10 +1,19 @@
 Hi, this is Emanuele. Welcome to my little corner of the web.
 
-Among the things I'm proud of, I wrote a configuration management system called
-[Pets](https://github.com/ema/pets), an article for Linux Weekly News about
-[SystemTap and bpftrace](https://lwn.net/Articles/852112/), and discovered a
-vulnerability in ppp:
+I have been a member of the [Debian
+Project](https://en.wikipedia.org/wiki/Debian#Organization) for about [20
+years](https://nm.debian.org/legacy/process/13389/) now. My current focus is
+the [ARM Ports](https://www.debian.org/ports/arm/), and in the past I worked on
+the [SPARC Port](https://www.debian.org/ports/sparc/). I've also been a member
+of the [Xfce](https://wiki.debian.org/Teams/DebianXfceGroup) and
+[Python](https://wiki.debian.org/Teams/PythonTeam) teams.
+
+Other things I'm proud of in no particular order: I wrote a configuration
+management system called [Pets](https://github.com/ema/pets), an article for
+Linux Weekly News about [SystemTap and bpftrace](https://lwn.net/Articles/852112/),
+and discovered a vulnerability in ppp:
 [CVE-2015-3310](https://www.debian.org/security/2015/dsa-3228).
+
 <!--
 * [Projects on GitHub](https://github.com/ema)
 * [My Debian Wiki page](https://wiki.debian.org/EmanueleRocca)
