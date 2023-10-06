@@ -60,7 +60,7 @@ package `grub-efi-amd64-bin`, or the signed version from
 `grub-efi-amd64-signed` and copy them under `/EFI/boot/grubx64.efi`. Or perhaps
 you want to try out systemd-boot? Then take
 `/usr/lib/systemd/boot/efi/systemd-bootx64.efi` from the package
-`systemd-boot-efi`, copy it to `/EFI/boot/grubx64.efi` and you're good to go.
+`systemd-boot-efi`, copy it to `/EFI/boot/bootx64.efi` and you're good to go.
 Figuring out the right systemd-boot configuration needed to start the Installer
 is left as an exercise.
 
