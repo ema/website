@@ -1,0 +1,216 @@
+---
+title: "Custom Debian Installer and Kernel on a USB stick"
+date: 2023-10-06T11:29:40+02:00
+---
+
+There are many valid reasons to create a custom Debian Installer image. You may
+need to pass some special arguments to the kernel, use a different GRUB
+version, automate the installation by means of
+https://wiki.debian.org/DebianInstaller/Preseed[preseeding], use a custom
+kernel, or modify the installer itself.
+
+If you have a EFI system, which is probably the case in 2023, there is no need
+to learn complex procedures in order to create a custom Debian Installer stick.
+
+The source of many frustrations is that the ISO format for CDs/DVDs is
+read-only, but you can just create a VFAT filesystem on a USB stick, copy all
+ISO contents onto the stick itself, and modify things at will.
+
+== Create a writable USB stick
+First create a FAT32 filesystem on the removable device and mount it. The
+device is `sdX` in the example.
+
+----
+$ sudo parted --script /dev/sdX mklabel msdos
+$ sudo parted --script /dev/sdX mkpart primary fat32 0% 100%
+$ sudo mkfs.vfat /dev/sdX1
+$ sudo mount /dev/sdX1 /mnt/data/
+----
+
+Then copy to the USB stick the installer ISO you would like to modify,
+`debian-testing-amd64-netinst.iso` here.
+
+----
+$ sudo kpartx -v -a debian-testing-amd64-netinst.iso
+
+# Mount the first partition on the ISO and copy its contents to the stick
+$ sudo mount /dev/mapper/loop0p1 /mnt/cdrom/
+$ sudo rsync -av /mnt/cdrom/ /mnt/data/
+$ sudo umount /mnt/cdrom
+
+# Same story with the second partition on the ISO
+$ sudo mount /dev/mapper/loop0p2 /mnt/cdrom/
+$ sudo rsync -av /mnt/cdrom/ /mnt/data/
+$ sudo umount /mnt/cdrom
+
+$ sudo kpartx -d debian-testing-amd64-netinst.iso
+$ sudo umount /mnt/data
+----
+
+Now try booting from the USB stick just to verify that everything went well and
+we can start customizing the image.
+
+== Boot loader, preseeding, installer hacks
+The easiest things we can change now are the shim, GRUB, and GRUB's
+configuration. The USB stick contains the shim under `/EFI/boot/bootx64.efi`,
+while GRUB is at `/EFI/boot/grubx64.efi`. This means that if you want to test a
+different shim / GRUB version, you just replace the relevant files. That's it.
+Take for example `/usr/lib/grub/x86_64-efi/monolithic/grubx64.efi` from the
+package `grub-efi-amd64-bin`, or the signed version from
+`grub-efi-amd64-signed` and copy them under `/EFI/boot/grubx64.efi`. Or perhaps
+you want to try out systemd-boot? Then take
+`/usr/lib/systemd/boot/efi/systemd-bootx64.efi` from the package
+`systemd-boot-efi`, copy it to `/EFI/boot/grubx64.efi` and you're good to go.
+Figuring out the right systemd-boot configuration needed to start the Installer
+is left as an exercise.
+
+By editing `/boot/grub/grub.cfg` you can pass arbitrary arguments to the kernel
+and the Installer itself. See https://www.debian.org/releases/stable/amd64/ch05s03.en.html[the official
+Installation Guide] for a comprehensive list of boot parameters.
+
+One very commong thing to do is automating the installation using a preseed
+file. Add the following to the kernel command line:
+`preseed/file=/cdrom/preseed.cfg` and create a `/preseed.cfg` file on the USB
+stick. As a little example:
+
+----
+d-i time/zone select Europe/Rome
+d-i passwd/root-password this-is-the-root-password
+d-i passwd/root-password-again this-is-the-root-password
+d-i passwd/user-fullname string Emanuele Rocca
+d-i passwd/username string ema
+d-i passwd/user-password password lol-haha-uh
+d-i passwd/user-password-again password lol-haha-uh
+d-i apt-setup/no_mirror boolean true
+d-i popularity-contest/participate boolean true
+tasksel tasksel/first multiselect standard
+----
+
+See Steve McIntyre's awesome page with the full list of available settings and
+their description: https://preseed.einval.com/debian-preseed/.
+
+Two noteworthy settings are `early_command` and `late_command`. They can be
+used to execute arbitrary commands and provide thus extreme flexibility! You
+can go as far as replacing parts of the installer with a sed command, or maybe
+wgetting an entirely different file. This is a fairly easy way to test minor
+Installer patches. As an example, I've once used this to test a patch to
+`grub-installer`:
+
+----
+d-i partman/early_command string wget https://people.debian.org/~ema/grub-installer-1035085-1 -O /usr/bin/grub-installer
+----
+
+Finally, the initrd contains all early stages of the installer. It's easy to
+unpack it, modify whatever component you like, and repack it. Say you want to
+change a given udev rule:
+
+----
+$ mkdir /tmp/new-initrd
+$ cd /tmp/new-initrd
+$ zstdcat /mnt/data/install.a64/initrd.gz | sudo cpio -id
+$ vi lib/udev/rules.d/60-block.rules
+$ find . | cpio -o -H newc | zstd --stdout > /mnt/data/install.a64/initrd.gz
+----
+
+== Custom udebs
+From a basic architectural standpoint the Debian Installer can be seen as an
+initrd that loads a series of special Debian packages called udebs. In the
+previous section we have seen how to (ab)use `early_command` to replace one of
+the scripts used by the Installer, namely `grub-installer`. It turns out that
+such script is installed by a udeb, so let's do things right and build a new
+Installer ISO with our custom grub udeb.
+
+Fetch the code for the
+https://salsa.debian.org/installer-team/grub-installer[grub-installer] udeb,
+make your changes and build it with a classic
+`dpkg-buildpackage -rfakeroot`.
+
+Then get the Installer code and install all dependencies:
+
+----
+$ git clone https://salsa.debian.org/installer-team/debian-installer/
+$ cd debian-installer/
+$ sudo apt build-dep .
+----
+
+Now add the `grub-installer` udeb to the `localudebs` directory and create a
+new netboot image:
+
+----
+$ cp /path/to/grub-installer_1.198_arm64.udeb build/localudebs/
+$ cd build
+$ fakeroot make clean_netboot build_netboot
+----
+
+Give it some time, soon enough you'll have a brand new ISO to test under
+`dest/netboot/mini.iso`.
+
+== Custom kernel
+Perhaps there's a kernel configuration option you need to enable, or maybe you
+need a more recent kernel version than what is available in sid.
+
+The https://kernel-team.pages.debian.net/kernel-handbook/[Debian Linux Kernel
+Handbook] has all the details for how to do things properly, but here's a quick
+example.
+
+Get the Debian kernel packaging from salsa and generate the upstream tarball:
+
+----
+$ git clone https://salsa.debian.org/kernel-team/linux/
+$ ./debian/bin/genorig.py https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
+----
+
+For RC kernels use
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git[the repo
+from Linus] instead of `linux-stable`.
+
+Now do your thing, for instance change a config setting by editing
+`debian/config/amd64/config`. Don't worry about where you put it in the file,
+there's a tool from https://salsa.debian.org/kernel-team/kernel-team to fix that:
+
+----
+$ /path/to/kernel-team/utils/kconfigeditor2/process.py .
+----
+
+Now build your kernel:
+
+----
+$ export MAKEFLAGS=-j$(nproc)
+$ export DEB_BUILD_PROFILES='pkg.linux.nokerneldbg pkg.linux.nokerneldbginfo pkg.linux.notools nodoc'
+$ debian/rules orig
+$ debian/rules debian/control
+$ dpkg-buildpackage -b -nc -uc
+----
+
+After some time, if everything went well, you should get a bunch of .deb files
+as well as a .changes file, `linux_6.6\~rc3-1~exp1_arm64.changes` here. To
+generate the udebs used by the Installer you need to first get a linux-signed
+.dsc file, and then build it -- with `sbuild` in this example:
+
+----
+$ /path/to/kernel-team/scripts/debian-test-sign linux_6.6~rc3-1~exp1_arm64.changes
+$ sbuild --dist=unstable --extra-package=$PWD linux-signed-arm64_6.6~rc3+1~exp1.dsc
+----
+
+Excellent, now you should have a ton of .udebs. To build a custom installer
+image with this kernel, copy them all under
+`debian-installer/build/localudebs/` and then run `fakeroot make clean_netboot
+build_netboot` as described in the previous section. In case you are trying to
+use a different kernel version from what is currently in sid, you will have to
+install the `linux-image` package on the system building the ISO, and change
+`LINUX_KERNEL_ABI` in `build/config/common`. The `linux-image` dependency in
+`debian/control` probably needs to be tweaked as well.
+
+That's it, the new Installer ISO should boot with your custom kernel!
+
+There is going to be another minor obstacle though, as `anna` will
+https://sources.debian.org/src/anna/1.92/anna.c/?hl=104#L104[complain] that
+your new  kernel cannot be found in the archive. Copy the kernel udebs you have
+built onto a vfat formatted USB stick, switch to a terminal, and install them
+all with `udpkg`:
+
+----
+~ # udpkg -i *.udeb
+----
+
+Now the installation should proceed smoothly.
