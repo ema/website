@@ -1,3 +1,6 @@
+* *Hardware Enablement in Debian: Lenovo Thinkpad X13s* (http://www.linux.it/~ema/slides/debian-x13s.pdf[slides]) +
+2023-11-25, Mini-debconf, Cambridge, United Kingdom
+
 * *Traffic Switchover 2018 vs 2020* (http://www.linux.it/~ema/slides/Traffic-Switchover-2018-2020.pdf[slides]) +
 2020-09-21, Wikimedia SRE Session, The Internet
 
