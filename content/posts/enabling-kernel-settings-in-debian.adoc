@@ -1,0 +1,96 @@
+---
+title: "Enabling Kernel Settings in Debian"
+date: 2024-02-12T09:52:40+02:00
+---
+
+This time it's about enabling new kernel config options in the official Debian
+kernel packages. A few dependencies are needed to run the various scripts used
+by the Debian kernel folks, as well as to build the kernel itself:
+
+----
+apt install git gpg python3-debian python3-dacite
+apt build-dep linux
+----
+
+With that in place, fetch the `linux` and `kernel-team` repos:
+
+----
+git clone --depth 1 https://salsa.debian.org/kernel-team/linux
+git clone --depth 1 https://salsa.debian.org/kernel-team/kernel-team
+----
+
+So far you've only got the Debian-specific bits. Fetch the actual kernel
+sources now. In the likely case that you're building a stable kernel, run the
+following from within the `linux` directory:
+
+----
+debian/bin/genorig.py https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
+----
+
+Use the `torvalds` repo if you're building an RC version instead:
+
+----
+debian/bin/genorig.py https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+----
+
+Now generate the upstream tarball as well as `debian/control`. The first
+command will take a bit, and the second command will fail: but that's success
+-- just as the output says.
+
+----
+debian/rules orig
+debian/rules debian/control
+----
+
+Now generate patched sources with:
+
+----
+debian/rules source
+----
+
+Time to edit the Kconfig and enable/disable whatever setting you wanted to
+change. Take a look around the files under `debian/config/` to see where your
+changes should go. If it's a setting shared among multiple architectures that
+may be `debian/config/config`. For x86-specific things, the file is
+`debian/config/amd64/config`. On aarch64 `debian/config/arm64/config`. If in
+doubt, you could try asking `#debian-kernel` on IRC.
+
+It may look like you need to figure out where exactly in the file the setting
+should be placed. That is not the case. There's a helpful script fixing things
+up for you:
+
+----
+../kernel-team/utils/kconfigeditor2/process.py .
+----
+
+The above will fail if you forgot to run `debian/rules source`. The
+`debian/build/source_rt/Kconfig` file is needed by the script:
+
+----
+Traceback (most recent call last):
+  File "/tmp/linux/../kernel-team/utils/kconfigeditor2/process.py", line 19, in __init__
+    menu = fs_menu[featureset or 'none']
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'rt'
+
+During handling of the above exception, another exception occurred:
+[...]
+FileNotFoundError: [Errno 2] No such file or directory: './debian/build/source_rt/Kconfig'
+----
+
+If that happens, run:
+
+----
+debian/rules source
+----
+
+Now `process.py` should work fine and fix your `config` file.
+
+Excellent, now the config is updated and we're ready to build the kernel. Off
+we go:
+
+----
+export MAKEFLAGS=-j$(nproc)
+export DEB_BUILD_PROFILES='pkg.linux.nokerneldbg pkg.linux.nokerneldbginfo pkg.linux.notools nodoc'
+dpkg-buildpackage -b -nc -uc
+----
