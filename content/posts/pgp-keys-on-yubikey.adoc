@@ -1,0 +1,117 @@
+---
+title: "PGP keys on Yubikey, with a side of Mutt"
+date: 2024-04-05T15:22:40+02:00
+---
+
+Here are my notes about copying PGP keys to external hardware devices such as
+Yubikeys. Let me begin by saying that the gpg tools are pretty bad at this.
+
+MAKE A COUPLE OF BACKUPS OF `~/.gnupg/` TO DIFFERENT ENCRYPTED USB STICKS
+BEFORE YOU START. GPG WILL MESS UP YOUR KEYS. SERIOUSLY.
+
+For example, would you believe me if I said that **saving** changes results in
+the removal of your private key? Well
+https://lists.gnupg.org/pipermail/gnupg-users/2016-July/056353.html[check this
+out].
+
+Now that you have multiple safe, offline backups of your keys, here are my notes.
+
+----
+apt install yubikey-manager scdaemon
+----
+
+Plug the Yubikey in, see if it's recognized properly:
+
+----
+ykman list
+gpg --card-status
+----
+
+Change the default PIN (123456) and Admin PIN (12345678):
+
+----
+gpg --card-edit
+gpg/card> admin
+gpg/card> passwd
+----
+
+Look at the openpgp information and change the maximum number of retries, if
+you like. I have seen this failing a couple of times, unplugging the Yubikey
+and putting it back in worked.
+
+----
+ykman openpgp info
+ykman openpgp access set-retries 7 7 7
+----
+
+Copy your keys. MAKE A BACKUP OF `~/.gnupg/` BEFORE YOU DO THIS.
+
+----
+gpg --edit-key $KEY_ID
+gpg> keytocard # follow the prompts to copy the first key
+----
+
+Now choose the next key and copy that one too. Repeat till all subkeys are
+copied.
+
+----
+gpg> key 1
+gpg> keytocard
+----
+
+Typing `gpg --card-status` you should be able to see all your keys on the
+Yubikey now.
+
+== Using the key on another machine
+
+How do you use your PGP keys on the Yubikey on other systems?
+
+Go to another system, if it does have a `~/.gnupg` directory already move it
+somewhere else.
+
+----
+apt install scdaemon
+----
+
+Import your public key:
+
+----
+gpg -k
+gpg --keyserver pgp.mit.edu --recv-keys $KEY_ID
+----
+
+Check the fingerprint and if it is indeed your key say you trust it:
+
+----
+gpg --edit-key $KEY_ID
+> trust
+> 5
+> y
+> save
+----
+
+Now try `gpg --card-status` and `gpg --list-secret-keys`, you should be able to
+see your keys. Try signing something, it should work.
+
+----
+gpg --output /tmp/x.out --sign /etc/motd
+gpg --verify /tmp/x.out
+----
+
+== Using the Yubikey with Mutt
+
+If you're using mutt with IMAP, there is a very simple trick to safely store
+your password on disk. Create an encrypted file with your IMAP password:
+
+----
+echo SUPERSECRET | gpg --encrypt > ~/.mutt_password.gpg
+----
+
+Add the following to `~/.muttrc`:
+
+----
+set imap_pass=`gpg --decrypt ~/.mutt_password.gpg`
+----
+
+With the above, mutt now prompts you to insert the Yubikey and type your PIN in
+order to connect to the IMAP server.
