@@ -101,10 +101,13 @@ gpg --verify /tmp/x.out
 == Using the Yubikey with Mutt
 
 If you're using mutt with IMAP, there is a very simple trick to safely store
-your password on disk. Create an encrypted file with your IMAP password:
+your password on disk. Write down your IMAP password to a file in a safe
+location, say `~/.mutt_password`. Then encrypt it and remove the plain-text
+file:
 
 ----
-echo SUPERSECRET | gpg --encrypt > ~/.mutt_password.gpg
+gpg --encrypt ~/.mutt_password # This will create ~/.mutt_password.gpg
+rm ~/.mutt_password
 ----
 
 Add the following to `~/.muttrc`:
