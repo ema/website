@@ -22,7 +22,7 @@
 * *Wikipedia's CDN* (http://www.linux.it/~ema/slides/WMF_Traffic_DIBRIS.pdf[slides]) +
 2018-03-26, DIBRIS, Università degli studi di Genova, Italy
 
-* *Running Wikipedia.org* (http://www.linux.it/~ema/slides/WMF_Traffic_Varnishcon_2016.pdf[slides], https://www.youtube.com/watch?v=W7nfw9Kj-zc[video]) +
+* *Running Wikipedia.org* (http://www.linux.it/~ema/slides/WMF_Traffic_Varnishcon_2016.pdf[slides], https://peertube.debian.social/w/sXAwgrnH8DXecRnUdgmpjQ[video]) +
 2016-06-17, VarnishCon 2016, Amsterdam, Netherlands
 
 * *Terraform* (http://www.linux.it/~ema/slides/terraform.pdf[slides]) +
@@ -37,7 +37,7 @@
 * *A brief history of Unix* (http://www.linux.it/~ema/slides/unix-history.pdf[slides], https://www.youtube.com/watch?v=L5tVg1Wk0tI[video]) +
 2015-03-19, ZenMate, Berlin, Germany
 
-* *ConPaaS Architecture* (http://www.linux.it/~ema/slides/conpaas-architecture.pdf[slides], https://vimeo.com/69010471[video]) +
+* *ConPaaS Architecture* (http://www.linux.it/~ema/slides/conpaas-architecture.pdf[slides], https://peertube.debian.social/w/hxskMZde2duVA8S7ft8c4A[video]) +
 2013-06-13, ConPaaS Workshop, Vrije Universiteit Amsterdam, Netherlands
 
 * *Developer support in a federated PaaS environment* (http://www.linux.it/~ema/slides/developers-and-paas.pdf[slides]) +
