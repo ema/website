@@ -1,3 +1,6 @@
+* *Debian Live* (http://www.linux.it/~ema/slides/debian-live.pdf[slides], https://peertube.debian.social/w/aXDhcG5ahPBHe9m47G8d5q[video]) +
+2024-10-12, Mini-debconf, Cambridge, United Kingdom
+
 * *Hardware Enablement in Debian: Lenovo Thinkpad X13s* (http://www.linux.it/~ema/slides/debian-x13s.pdf[slides], http://meetings-archive.debian.net/pub/debian-meetings/2023/MiniDebConf-Cambridge/hardware-enablement-in-debian.webm[video]) +
 2023-11-25, Mini-debconf, Cambridge, United Kingdom
 
