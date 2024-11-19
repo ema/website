@@ -34,7 +34,7 @@
 * *Varnish Cache* (http://www.linux.it/~ema/slides/varnish.pdf[slides]) +
 2015-06-11, ZenMate, Berlin, Germany
 
-* *A brief history of Unix* (http://www.linux.it/~ema/slides/unix-history.pdf[slides], https://www.youtube.com/watch?v=L5tVg1Wk0tI[video]) +
+* *A brief history of Unix* (http://www.linux.it/~ema/slides/unix-history.pdf[slides], https://archive.org/details/a-brief-history-of-unix[video]) +
 2015-03-19, ZenMate, Berlin, Germany
 
 * *ConPaaS Architecture* (http://www.linux.it/~ema/slides/conpaas-architecture.pdf[slides], https://peertube.debian.social/w/hxskMZde2duVA8S7ft8c4A[video]) +
