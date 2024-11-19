@@ -1,7 +1,7 @@
 * *Debian Live* (http://www.linux.it/~ema/slides/debian-live.pdf[slides], https://peertube.debian.social/w/aXDhcG5ahPBHe9m47G8d5q[video]) +
 2024-10-12, Mini-debconf, Cambridge, United Kingdom
 
-* *Hardware Enablement in Debian: Lenovo Thinkpad X13s* (http://www.linux.it/~ema/slides/debian-x13s.pdf[slides], http://meetings-archive.debian.net/pub/debian-meetings/2023/MiniDebConf-Cambridge/hardware-enablement-in-debian.webm[video]) +
+* *Hardware Enablement in Debian: Lenovo Thinkpad X13s* (http://www.linux.it/~ema/slides/debian-x13s.pdf[slides], https://peertube.debian.social/w/ikGRH1fPwUiSYZNGx42z9E[video]) +
 2023-11-25, Mini-debconf, Cambridge, United Kingdom
 
 * *Traffic Switchover 2018 vs 2020* (http://www.linux.it/~ema/slides/Traffic-Switchover-2018-2020.pdf[slides]) +
