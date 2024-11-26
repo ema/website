@@ -1,0 +1,73 @@
+---
+title: "Building Debian packages The Right Way"
+date: 2024-11-26T09:34:40+01:00
+---
+
+There is more than one way to do it, but it seems that The Right Way to build
+Debian packages today is using https://wiki.debian.org/sbuild[sbuild] with the
+https://manpages.debian.org/unstable/util-linux/unshare.1.en.html[unshare]
+backend. The most common backend before the rise of unshare was
+https://manpages.debian.org/unstable/schroot/schroot.1.en.html[schroot].
+
+The official Debian Build Daemons
+https://lists.debian.org/debian-devel-announce/2024/11/msg00002.html[have
+recently transitioned to using sbuild with unshare], providing a strong
+motivation to consider making the switch. Additionally the new approach means:
+(1) no need to configure schroot, and (2) no need to run the build as root.
+
+Here are my notes about moving to the new setup, for future reference and in
+case they may be useful to others.
+
+First I installed the required packages:
+
+----
+apt install sbuild mmdebstrap uidmap
+----
+
+Then I created the following script to update my chroots every night:
+
+----
+#!/bin/bash
+
+for arch in arm64 armhf armel; do
+    HOME=/tmp mmdebstrap --quiet --arch=$arch --include=ca-certificates --variant=buildd unstable \
+        ~/.cache/sbuild/unstable-$arch.tar http://127.0.0.1:3142/debian
+done
+----
+
+In the script, I'm calling `mmdebstrap` with `--quiet` because I don't want to get
+any output on succesful execution. The script is running in cron with email
+notifications, and I only want to get a message if something goes south. I'm
+setting `HOME=/tmp` for a similar reason: the unshare user does not have access
+to my actual home directory, and by default dpkg tries to use `$HOME/.dpkg.cfg`
+as the configuration file. By overriding `HOME` I avoid the following message
+to standard error:
+
+----
+dpkg: warning: failed to open configuration file '/home/ema/.dpkg.cfg' for reading: Permission denied
+----
+
+Then I added the following to my sbuild configuration file (`~/.sbuildrc`):
+
+----
+$chroot_mode = 'unshare';
+$unshare_tmpdir_template = '/dev/shm/tmp.sbuild.XXXXXXXXXX';
+----
+
+The first option sets the sbuild backend to unshare, whereas
+`unshare_tmpdir_template` is needed on Bookworm to ensure that the build process
+runs in memory rather than on disk for performance reasons. Starting with
+Trixie, `/tmp` is by default a tmpfs so the setting won't be needed anymore.
+
+Packages for different architectures can now be built as follows:
+
+----
+# Tarball used: ~/.cache/sbuild/unstable-arm64.tar
+$ sbuild --dist=unstable hello
+
+# Tarball used: ~/.cache/sbuild/unstable-armhf.tar
+$ sbuild --dist=unstable --arch=armhf hello
+----
+
+If you have any comments or suggestions about any of this,
+https://www.linux.it/~ema/contacts/[please let me know].
