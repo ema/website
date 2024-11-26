@@ -1,0 +1,5 @@
+Build with:
+$ /usr/bin/hugo
+
+Upload with:
+$ rsync -rlptD . /tmp/kirk/
