@@ -1,0 +1,285 @@
+---
+title: "Murder Mystery: GCC Builds Failing After sbuild Refactoring"
+date: 2024-12-13T16:31:40+01:00
+---
+
+This is the story of an investigation conducted by Jochen Sprickerhof, Helmut
+Grohne, and myself. It was true teamwork, and we would have not reached the
+bottom of the issue working individually. We think you will find it as
+interesting and fun as we did, so here is a brief writeup. A few of the steps
+mentioned here took several days, others just a few minutes. What is described
+as a natural progression of events did not always look very obvious at the
+moment at all.
+
+Let us go through the Six Stages of Debugging together.
+
+== Stage 1: That cannot happen
+Official Debian GCC builds start failing on multiple architectures in late
+November.
+
+The build error happens on the build servers when running the testuite, but we
+know this cannot happen. GCC builds are not meant to fail in case of testsuite
+failures!  Return codes are not making the build fail, `make` is being called
+with `-k`, it just cannot happen.
+
+A *lot* of the GCC tests are always failing in fact, and an extensive log of
+the results is posted to https://lists.debian.org/debian-gcc/[the debian-gcc
+mailing list], but the packages always build fine regardless.
+
+On the build daemons,
+https://buildd.debian.org/status/fetch.php?pkg=gcc-14&arch=amd64&ver=14.2.0-9&stamp=1732815893&raw=0[build
+failures take several hours].
+
+== Stage 2: That does not happen on my machine
+Building on my machine running Bookworm is just fine. The Build Daemons run
+Bookworm and use a Sid chroot for the build environment, just like I am. Same
+kernel.
+
+Debian packages are built by https://buildd.debian.org/[a network of
+autobuilding machines] using a program called
+https://wiki.debian.org/sbuild[sbuild]. In my last blog post
+https://www.linux.it/~ema/posts/building-debian-packages-the-right-way/[I
+mentioned the transition from the schroot backend to a new one based on
+unshare].
+
+The only obvious difference between my setup and the Debian buildds is that I
+am using sbuild *0.85.0* from bookworm, and the buildds have *0.86.3~bpo12+1*
+from bookworm-backports. Trying again with *0.86.3~bpo12+1*, the build fails on
+my system too. The build daemons were updated to the bookworm-backports version
+of sbuild at some point in late November. Ha.
+
+== Stage 3: That should not happen
+There are quite a few sbuild versions in between 0.85.0  and 0.86.3~bpo12+1,
+but looking at recent sbuild bugs shows that
+https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1084956[sbuild 0.86.0 was
+breaking "quite a number of packages"]. Indeed, with 0.86.0 the build still
+fails. Trying the version immediately before, 0.85.11, the build finishes
+correctly. This took more time than it sounds, one run including the tests
+takes several hours. We need a way to shorten this somehow.
+
+:plus: +
+
+The Debian packaging of GCC allows to specify which languages you may want to
+skip, and by default it builds Ada, Go, C, C{plus}{plus}, D, Fortran, Objective
+C, Objective C{plus}{plus}, M2, and Rust. When running the tests sequentially,
+the build logs stop roughly around the tests of a runtime library for D,
+libphobos. So can we still reproduce the failure by skipping everything except
+for D? With
+`DEB_BUILD_OPTIONS=nolang=ada,go,c,c{plus}{plus},fortran,objc,obj-c++,m2,rust`
+the build still fails, and it fails faster than before. Several minutes, not
+hours. This is progress, and time to file a bug. The report contains massive
+spoilers, so no link. :-)
+
+== Stage 4: Why does that happen?
+Something is causing the build to end prematurely. It's not the OOM killer, and
+the kernel does not have anything useful to say in the logs. Can it be that the
+D language tests are sending signals to some process, and that is what's
+killing `make` ? We start tracing signals sent with `bpftrace` by writing the
+following script, `signals.bt`:
+
+----
+tracepoint:signal:signal_generate {
+    printf("%s PID %d (%s) sent signal %d to PID %d\n", comm, pid, args->sig, args->pid);
+}
+----
+
+And executing it with `sudo bpftrace signals.bt`.
+
+The build takes its sweet time, and it fails. Looking at the trace output
+there's a suspicious `process.exe` terminating stuff.
+
+----
+process.exe (PID: 2868133) sent signal 15 to PID 711826
+----
+
+That looks interesting, but we have no clue what PID 711826 may be. Let's change
+the script a bit, and trace signals received as well.
+
+----
+tracepoint:signal:signal_generate {
+    printf("PID %d (%s) sent signal %d to %d\n", pid, comm, args->sig, args->pid);
+}
+
+tracepoint:signal:signal_deliver {
+    printf("PID %d (%s) received signal %d\n", pid, comm, args->sig);
+}
+----
+
+The working version of sbuild was using `dumb-init`, whereas the new one
+features
+https://salsa.debian.org/debian/sbuild/-/commit/e5a5dc7d258e939e62ad73f7b60f0b47507c6565[a
+little init in perl]. We patch the current version of sbuild by making it use
+`dumb-init` instead, and trace two builds: one with the perl init, one with
+`dumb-init`.
+
+Here are the signals observed when building with `dumb-init`.
+
+----
+PID 3590011 (process.exe) sent signal 2 to 3590014
+PID 3590014 (sleep) received signal 9
+PID 3590011 (process.exe) sent signal 15 to 3590063
+PID 3590063 (std.process tem) received signal 9
+PID 3590011 (process.exe) sent signal 9 to 3590065
+PID 3590065 (std.process tem) received signal 9
+----
+
+And this is what happens with the new init in perl:
+
+----
+PID 3589274 (process.exe) sent signal 2 to 3589291
+PID 3589291 (sleep) received signal 9
+PID 3589274 (process.exe) sent signal 15 to 3589338
+PID 3589338 (std.process tem) received signal 9
+PID 3589274 (process.exe) sent signal 9 to 3589340
+PID 3589340 (std.process tem) received signal 9
+PID 3589274 (process.exe) sent signal 15 to 3589341
+PID 3589274 (process.exe) sent signal 15 to 3589323
+PID 3589274 (process.exe) sent signal 15 to 3589320
+PID 3589274 (process.exe) sent signal 15 to 3589274
+PID 3589274 (process.exe) received signal 9
+PID 3589341 (sleep) received signal 9
+PID 3589273 (sbuild-usernsex) sent signal 9 to 3589320
+PID 3589273 (sbuild-usernsex) sent signal 9 to 3589323
+----
+
+There are a few additional SIGTERM being sent when using the perl init, that's
+helpful. At this point we are fairly convinced that `process.exe` is worth
+additional inspection. The
+https://gcc.gnu.org/git/?p=gcc.git;a=blob;f=libphobos/src/std/process.d;h=494910f35350927a561c98c78f6b19fe20a579a9;hb=HEAD#l1221[source
+code of process.d] shows something interesting:
+
+----
+1221 @system unittest
+1222 {
+[...]
+1247     auto pid = spawnProcess(["sleep", "10000"],
+[...]
+1260     // kill the spawned process with SIGINT
+1261     // and send its return code
+1262     spawn((shared Pid pid) {
+1263         auto p = cast() pid;
+1264         kill(p, SIGINT);
+----
+
+So yes, there's our `sleep` and the SIGINT (signal 2) right in the unit tests
+of `process.d`, just like we have observed in the bpftrace output.
+
+Can we study the behavior of `process.exe` in isolation, separatedly from the
+build? Indeed we can. Let's take the executable from a failed build, and try
+running it under /usr/libexec/sbuild-usernsexec.
+
+First, we prepare a chroot inside a suitable user namespace:
+
+----
+unshare --map-auto --setuid 0 --setgid 0 mkdir /tmp/rootfs
+cd /tmp/rootfs
+cat /home/ema/.cache/sbuild/unstable-arm64.tar | unshare --map-auto --setuid 0 --setgid 0 tar xf  -
+unshare --map-auto --setuid 0 --setgid 0 mkdir /tmp/rootfs/whatever
+unshare --map-auto --setuid 0 --setgid 0 cp process.exe /tmp/rootfs/
+----
+
+Now we can run `process.exe` on its own using the perl init, and trace signals at will:
+
+----
+/usr/libexec/sbuild-usernsexec --pivotroot --nonet u:0:100000:65536  g:0:100000:65536 /tmp/rootfs ema /whatever -- /process.exe
+----
+
+We can compare the behavior of the perl init vis-a-vis the one using
+`dumb-init` in milliseconds instead of minutes.
+
+== Stage 5: Oh, I see.
+Why does `process.exe` send more SIGTERMs when using the perl init is now the
+big question. We have a simple reproducer, so this is where using `strace`
+becomes possible.
+
+----
+sudo strace --user ema --follow-forks -o sbuild-dumb-init.strace ./sbuild-usernsexec-dumb-init --pivotroot --nonet u:0:100000:65536  g:0:100000:65536 /tmp/dumbroot ema /whatever -- /process.exe
+---- 
+
+We start comparing https://people.debian.org/~ema/sbuild-dumb-init.strace[the
+strace output of dumb-init] with
+https://people.debian.org/~ema/sbuild-perl-init.strace[that of perl-init],
+looking in particular for different calls to `kill`.
+
+Here is what `process.exe` does under dumb-init:
+
+----
+3593883 kill(-2, SIGTERM)               = -1 ESRCH (No such process)
+----
+
+No such process. Under `perl-init` instead:
+
+----
+3593777 kill(-2, SIGTERM <unfinished ...>
+----
+
+The process *is* there under `perl-init`!
+
+That is a kill with negative pid. From the `kill(2)` man page:
+
+----
+If pid is less than -1, then sig is sent to every process in the process group whose ID is -pid.
+----
+
+It would have been *very* useful to see this kill with negative pid in the
+output of bpftrace, why didn't we? The tracepoint used,
+`tracepoint:signal:signal_generate`, shows when signals are actually being
+sent, and not the syscall being called. To confirm, one can trace
+`tracepoint:syscalls:sys_enter_kill` and see the negative PIDs, for example:
+
+----
+PID 312719 (bash) sent signal 2 to -312728
+----
+
+The obvious question at this point is: why is there no process group 2 when
+using `dumb-init`?
+
+== Stage 6: How did that ever work?
+We know that `process.exe` sends a SIGTERM to every process in the process
+group with ID 2. To find out what this process group may be, we spawn a shell
+with `dumb-init` and observe under `/proc` PIDs 1, 16, and 17. With `perl-init`
+we have 1, **2**, and 17. When running dumb-init, there are a few forks before
+launching the program, explaining the difference. Looking at `/proc/2/cmdline`
+we see that it's bash, ie. the program we are running under `perl-init`. When
+building a package, that is `dpkg-buildpackage` itself.
+
+The test is accidentally killing its own process group.
+
+Now where does this `-2` come from in the test?
+
+----
+2363     // Special values for _processID.
+2364     enum invalid = -1, terminated = -2;
+----
+
+Oh. -2 is used as a special value for PID, meaning "terminated". And there's a
+call to kill() later on:
+
+----
+2694     do { s = tryWait(pid); } while (!s.terminated);
+[...]
+2697     assertThrown!ProcessException(kill(pid));
+----
+
+What sets `pid` to `terminated` you ask?
+
+Here is `tryWait`:
+
+----
+2568 auto tryWait(Pid pid) @safe
+2569 {
+2570     import std.typecons : Tuple;
+2571     assert(pid !is null, "Called tryWait on a null Pid.");
+2572     auto code = pid.performWait(false);
+----
+
+And `performWait`:
+
+----
+2306         _processID = terminated;
+----
+
+The solution, dear reader, is https://github.com/dlang/phobos/pull/10586/files[not to kill].
+
+PS: the bug report with spoilers for those interested is
+https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1089007[#1089007].
