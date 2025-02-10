@@ -1,4 +1,4 @@
-* *Enabling Architectural Features in Debian: PAC and BTI on arm64* (http://www.linux.it/~ema/slides/pacbti.pdf[slides]) +
+* *Enabling Architectural Features in Debian: PAC and BTI on arm64* (http://www.linux.it/~ema/slides/pacbti.pdf[slides], https://fosdem.org/2025/schedule/event/fosdem-2025-5517-enabling-architectural-features-in-debian-pac-and-bti-on-arm64/[video]) +
 2025-02-02, FOSDEM 25, Brussels, Belgium
 
 * *Debian Live* (http://www.linux.it/~ema/slides/debian-live.pdf[slides], https://peertube.debian.social/w/aXDhcG5ahPBHe9m47G8d5q[video]) +
