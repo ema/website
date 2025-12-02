@@ -2,4 +2,5 @@ Build with:
 $ /usr/bin/hugo
 
 Upload with:
+$ sshfs ema@kirk.linux.it: /tmp/kirk
 $ rsync -vrlptD public/ /tmp/kirk/
