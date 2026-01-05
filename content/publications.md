@@ -1,7 +1,8 @@
+* Emanuele Rocca. [Packages Not Using The Default Build Flags: A Taxonomy](https://hal.science/hal-05334704/). DebConf25, IRISA, Jul 2025, Brest, France. pp.4.
 * G. Pierre, T. Kielmann, E. Rocca, K. Razavi, B. IJff, H. Fernandez, R. Figueiredo, A. Uta, A. Vintila, A. Oprescu, T. Schuett, M. Berlin, M. Artac, A. Cernivec, [ConPaaS: An Integrated Runtime Environment for Elastic Cloud Applications](http://www.cs.vu.nl/~kaveh/pubs/pdf/hpdc13-conpaas-poster.pdf), in: HPDC (Poster), 2013.
 
 My [Erdős number](https://en.wikipedia.org/wiki/Erd%C5%91s_number) is 5 thanks
-to the above publication: Thilo Kielmann -&gt; Willem Jan Fokkink -&gt; Robbert
+to the ConPaaS publication: Thilo Kielmann -&gt; Willem Jan Fokkink -&gt; Robbert
 J.  Fokkink -&gt; Jeffrey O. Shallit -&gt; Paul Erdős.
 
 Further, I have performed as an extra in [a movie featuring  Maximilian
