@@ -12,7 +12,14 @@ Other things I'm proud of in no particular order: I wrote a configuration
 management system called [Pets](https://github.com/ema/pets), an article for
 Linux Weekly News about [SystemTap and bpftrace](https://lwn.net/Articles/852112/),
 and discovered a vulnerability in ppp:
-[CVE-2015-3310](https://www.debian.org/security/2015/dsa-3228).
+[CVE-2015-3310](https://www.debian.org/security/2015/dsa-3228). I have worked for
+several years as Site Reliability Engineer at Wikipedia, diagnosing and solving
+interesting production issues in the open. [T265625](https://phabricator.wikimedia.org/T265625)
+and [T293879](https://phabricator.wikimedia.org/T293879) are just two examples.
+Often the work resulted in Open Source contributions to projects such as
+[Varnish](https://github.com/varnishcache/varnish-cache/issues/3273) and
+[Apache Traffic Server](https://github.com/apache/trafficserver/commit/4575058101fea8ff4d854415d7d580e05f58131b),
+among others.
 
 <!--
 * [Projects on GitHub](https://github.com/ema)
@@ -22,5 +29,5 @@ and discovered a vulnerability in ppp:
 * [LinkedIn](https://de.linkedin.com/in/emarocca/)
 -->
 
-I also occasionally write about the technical topics I find interesting. Here
-you can find my latest writings:
+Occasionally, I write about the technical topics I find interesting. Here you
+can find my latest writings:
