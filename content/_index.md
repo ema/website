@@ -21,7 +21,7 @@ among others.
 In my current work at Arm I'm contributing to lots of projects all over
 the stack, from the
 [Linux kernel](https://lwn.net/ksdb/developers/show?dev=39126) and
-[systemd](https://github.com/systemd/systemd/pull/42019/), to
+[systemd](https://github.com/systemd/systemd/commits?author=ema), to
 [LLVM](https://github.com/llvm/llvm-project/pull/99446),
 [Firefox](https://hg-edge.mozilla.org/integration/autoland/rev/2e0f02d3955d),
 and more.
